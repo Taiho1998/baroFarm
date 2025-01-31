@@ -38,7 +38,7 @@ export default function MyPage() {
     //로그아웃 시 캐시 삭제
     resetUser();
     queryClient.clear();
-    navigate("/users/login");
+    navigate("/");
   };
 
   //로그인 시 로그인 화면으로 이동
@@ -169,17 +169,20 @@ export default function MyPage() {
               alt="recentProduct icon"
             />
           </Link>
-          <Link
-            to={"/users/bookmarks"}
-            className="flex items-center text-[14px] mt-[24px]"
-          >
-            찜한 상품
-            <img
-              src="/icons/icon_forward.svg"
-              className="h-[16px] ml-auto"
-              alt="likedProduct icon"
-            />
-          </Link>
+          {/* 로그인한 유저만 찜 기능을 이용할 수 있음. 따라서 찜한 상품 조회 기능은 필요 없음 */}
+          {user && (
+            <Link
+              to={"/users/bookmarks"}
+              className="flex items-center text-[14px] mt-[24px]"
+            >
+              찜한 상품
+              <img
+                src="/icons/icon_forward.svg"
+                className="h-[16px] ml-auto"
+                alt="likedProduct icon"
+              />
+            </Link>
+          )}
         </div>
         {/* 해당 영역은 로그아웃 상태일 시 사용을 필요로 하지 않음 */}
         {user && data?.type === "seller" && (

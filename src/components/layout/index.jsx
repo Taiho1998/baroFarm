@@ -16,13 +16,15 @@ export default function Layout() {
     !pathname.includes("payment");
 
   return (
-    <div className="max-w-[390px] mx-auto">
-      <Header {...headerContents} />
-      <main className="pb-[100px] pt-[70px]">
-        {/* Outlet에 데이터를 전달하려면 반드시 context라는 이름으로 데이터를 제공해야 함 */}
-        <Outlet context={{ setHeaderContents }} />
-      </main>
-      {showFooter && <Footer />}
+    <div className="w-full h-max bg-btn-primary">
+      <div className="max-w-[390px] mx-auto min-h-screen bg-white">
+        <Header {...headerContents} />
+        <main className="pb-[100px] pt-[70px]">
+          {/* Outlet에 데이터를 전달하려면 반드시 context라는 이름으로 데이터를 제공해야 함 */}
+          <Outlet context={{ setHeaderContents }} />
+        </main>
+        {showFooter && <Footer />}
+      </div>
     </div>
   );
 }

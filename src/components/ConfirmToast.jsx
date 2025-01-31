@@ -8,11 +8,11 @@ ConfirmToast.propTypes = {
 };
 
 export default function ConfirmToast({ message, resolve }) {
-  const newMessage = message.split("\n").map((line, index) => (
-    <Fragment key={index}>
+  const newMessage = message.split("\n").map((line) => (
+    <>
       {line}
       <br />
-    </Fragment>
+    </>
   ));
 
   return (
