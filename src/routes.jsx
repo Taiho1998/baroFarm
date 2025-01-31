@@ -1,3 +1,4 @@
+import ProtectedRoute from "./ProtectedRoute.jsx";
 import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
@@ -11,8 +12,12 @@ const ProductDetailPage = lazy(() => import("@pages/market/ProductDetailPage"));
 const ProductNewPage = lazy(() => import("@pages/market/ProductNewPage"));
 const ReviewPage = lazy(() => import("@pages/market/ReviewPage"));
 const PhotoReviewPage = lazy(() => import("@pages/market/PhotoReviewPage"));
-const ProductMyReviewPage = lazy(() => import("@pages/market/ProductMyReviewPage"));
-const ProductNewReviewPage = lazy(() => import("@pages/market/ProductNewReviewPage"));
+const ProductMyReviewPage = lazy(() =>
+  import("@pages/market/ProductMyReviewPage")
+);
+const ProductNewReviewPage = lazy(() =>
+  import("@pages/market/ProductNewReviewPage")
+);
 const BookmarkPage = lazy(() => import("@pages/user/BookmarkPage"));
 const MyPage = lazy(() => import("@pages/user/MyPage"));
 const ProfilePage = lazy(() => import("@pages/user/ProfilePage"));
@@ -34,7 +39,9 @@ const EditProfilePage = lazy(() => import("@pages/user/EditProfilePage"));
 const MyPostPage = lazy(() => import("@pages/user/MyPostPage"));
 const SearchBestPage = lazy(() => import("@pages/market/SearchBestPage"));
 const SearchNewPage = lazy(() => import("@pages/market/SearchNewPage"));
-const SearchSeasonalPage = lazy(() => import("@pages/market/SearchSeasonalPage"));
+const SearchSeasonalPage = lazy(() =>
+  import("@pages/market/SearchSeasonalPage")
+);
 const Layout = lazy(() => import("@components/layout"));
 
 const router = createBrowserRouter(
@@ -57,26 +64,70 @@ const router = createBrowserRouter(
           children: [
             { path: ":_id", element: <ProductDetailPage /> },
             { path: ":_id/reviews", element: <ReviewPage /> },
-            { path: ":_id/reviews/photo", element: <PhotoReviewPage /> },
-            { path: ":_id/reviewed", element: <ProductMyReviewPage /> },
+            {
+              path: ":_id/reviews/photo",
+              element: <PhotoReviewPage />,
+            },
+            {
+              path: ":_id/reviewed",
+              element: (
+                <ProtectedRoute>
+                  <ProductMyReviewPage />
+                </ProtectedRoute>
+              ),
+            },
             {
               path: ":_id/reviews/new/:order_id",
-              element: <ProductNewReviewPage />,
+              element: (
+                <ProtectedRoute>
+                  <ProductNewReviewPage />
+                </ProtectedRoute>
+              ),
             },
-            { path: "new", element: <ProductNewPage /> },
+            {
+              path: "new",
+              element: (
+                <ProtectedRoute>
+                  <ProductNewPage />
+                </ProtectedRoute>
+              ),
+            },
           ],
         },
-        { path: "/cart", element: <CartPage /> },
-        { path: "/payment", element: <PaymentPage /> },
-        { path: "/complete", element: <OrderCompletePage /> },
+        {
+          path: "/cart",
+          element: <ProtectedRoute>{<CartPage />}</ProtectedRoute>,
+        },
+        {
+          path: "/payment",
+          element: (
+            <ProtectedRoute>
+              <PaymentPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/complete",
+          element: (
+            <ProtectedRoute>
+              <OrderCompletePage />
+            </ProtectedRoute>
+          ),
+        },
         {
           path: "/search",
           children: [
             { index: true, element: <SearchPage /> },
-            { path: "results", element: <SearchResultsPage /> },
+            {
+              path: "results",
+              element: <SearchResultsPage />,
+            },
             { path: "best", element: <SearchBestPage /> },
             { path: "new", element: <SearchNewPage /> },
-            { path: "seasonal", element: <SearchSeasonalPage /> },
+            {
+              path: "seasonal",
+              element: <SearchSeasonalPage />,
+            },
           ],
         },
         {
@@ -84,36 +135,102 @@ const router = createBrowserRouter(
           children: [
             { path: "signup", element: <SignupPage /> },
             { path: "login", element: <LoginPage /> },
-            { path: "login/kakao", element: <KakaoAuthPage /> },
+            {
+              path: "login/kakao",
+              element: <KakaoAuthPage />,
+            },
             { path: "mypage", element: <MyPage /> },
             {
               path: "profile",
               children: [
-                { index: true, element: <ProfilePage /> },
-                { path: "edit", element: <EditProfilePage /> },
+                {
+                  index: true,
+                  element: (
+                    <ProtectedRoute>
+                      <ProfilePage />
+                    </ProtectedRoute>
+                  ),
+                },
+                {
+                  path: "edit",
+                  element: (
+                    <ProtectedRoute>
+                      <EditProfilePage />
+                    </ProtectedRoute>
+                  ),
+                },
               ],
             },
 
-            { path: "bookmarks", element: <BookmarkPage /> },
+            {
+              path: "bookmarks",
+              element: (
+                <ProtectedRoute>
+                  <BookmarkPage />
+                </ProtectedRoute>
+              ),
+            },
             { path: "recent", element: <RecentPage /> },
             {
               path: "sale",
               children: [
-                { index: true, element: <SalePage /> },
-                { path: ":id/edit", element: <EditProductPage /> },
+                {
+                  index: true,
+                  element: (
+                    <ProtectedRoute>
+                      <SalePage />
+                    </ProtectedRoute>
+                  ),
+                },
+                {
+                  path: ":id/edit",
+                  element: (
+                    <ProtectedRoute>
+                      <EditProductPage />
+                    </ProtectedRoute>
+                  ),
+                },
               ],
             },
-            { path: "purchase", element: <PurchasePage /> },
-            { path: "myboard", element: <MyPostPage /> },
+            {
+              path: "purchase",
+              element: (
+                <ProtectedRoute>
+                  <PurchasePage />
+                </ProtectedRoute>
+              ),
+            },
+            {
+              path: "myboard",
+              element: (
+                <ProtectedRoute>
+                  <MyPostPage />
+                </ProtectedRoute>
+              ),
+            },
           ],
         },
         {
           path: "/board",
           children: [
             { index: true, element: <BoardPage /> },
-            { path: "new", element: <BoardNewPage /> },
+            {
+              path: "new",
+              element: (
+                <ProtectedRoute>
+                  <BoardNewPage />
+                </ProtectedRoute>
+              ),
+            },
             { path: ":_id", element: <BoardDetailPage /> },
-            { path: ":_id/edit", element: <BoardEditPage /> },
+            {
+              path: ":_id/edit",
+              element: (
+                <ProtectedRoute>
+                  <BoardEditPage />
+                </ProtectedRoute>
+              ),
+            },
           ],
         },
       ],
