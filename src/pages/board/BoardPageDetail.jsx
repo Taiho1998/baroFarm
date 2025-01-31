@@ -68,7 +68,7 @@ export default function BoardPageDetail({ item }) {
           <div className="mt-10">
             {item.image && (
               <img
-                className="relative rounded-md"
+                className="relative rounded-md mx-auto"
                 src={`https://11.fesp.shop${item.image}`}
                 onLoad={() => checkOverflow()}
               />
