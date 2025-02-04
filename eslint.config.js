@@ -3,17 +3,19 @@ import globals from "globals";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
+import ts from "@typescript-eslint/parser"; // 추가
 
 export default [
   { ignores: ["dist"] },
   {
-    files: ["**/*.{js,jsx}"],
+    files: ["**/*.{js,jsx,ts,tsx}"],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
+      parser: ts,
       parserOptions: {
         ecmaVersion: "latest",
-        ecmaFeatures: { jsx: true },
+        ecmaFeatures: { jsx: true, tsx: true },
         sourceType: "module",
       },
     },
