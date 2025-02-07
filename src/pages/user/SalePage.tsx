@@ -8,9 +8,10 @@ import useUserStore from "@zustand/useUserStore";
 import useAxiosInstance from "@hooks/useAxiosInstance";
 import Spinner from "@components/Spinner";
 import { Helmet } from "react-helmet-async";
+import { ProductData, SetHeaderContents } from "types";
 
 export default function SalePage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
   const { user } = useUserStore();
   const axios = useAxiosInstance();
@@ -39,16 +40,22 @@ export default function SalePage() {
     return <Spinner />;
   }
 
-  const groupedData = data.reduce((acc, item) => {
-    const date = new Date(item.createdAt).toLocaleDateString(); // 날짜만 추출 (YYYY.MM.DD)
-    if (!acc[date]) acc[date] = []; // 날짜 키가 없으면 생성
-    acc[date].push(item); // 날짜 키에 데이터 추가
-    return acc;
-  }, {});
+  const groupedData = data.reduce(
+    (acc: { [key: string]: ProductData[] }, item: ProductData) => {
+      const date = new Date(item.createdAt).toLocaleDateString(); // 날짜만 추출 (YYYY.MM.DD)
+      if (!acc[date]) acc[date] = []; // 날짜 키가 없으면 생성
+      acc[date].push(item); // 날짜 키에 데이터 추가
+      return acc;
+    },
+    {}
+  );
+
   const groupedArray = Object.entries(groupedData).map(([date, items]) => ({
     date,
-    items,
+    items: items as ProductData[],
   }));
+
+  console.log("요청한 데이터:", groupedArray);
 
   const SoldItemList = groupedArray.map((data) => {
     return (
