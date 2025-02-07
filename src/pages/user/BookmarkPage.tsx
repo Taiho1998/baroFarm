@@ -7,6 +7,7 @@ import HeaderIcon from "@components/HeaderIcon";
 import Products from "@components/Products";
 import Spinner from "@components/Spinner";
 import { Helmet } from "react-helmet-async";
+import DataErrorPage from "@pages/DataErrorPage";
 
 export default function BookmarkPage() {
   const { setHeaderContents } = useOutletContext();

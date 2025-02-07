@@ -28,16 +28,11 @@ export default function EditProfilePage() {
   const editUserInfo = useMutation({
     mutationFn: (formData) => {
       const { value, detailValue, ...userData } = formData;
-      if (
-        !!userData.extra.userName +
-          (!!userData.address.trim() || !!value) +
-          !!userData.phone ===
-          1 ||
-        !!userData.extra.userName +
-          (!!userData.address.trim() || !!value) +
-          !!userData.phone ===
-          2
-      ) {
+      const count =
+        Number(!!userData.extra.userName) +
+        Number(!!userData.address.trim() || !!value) +
+        Number(!!userData.phone);
+      if (count === 1 || count === 2) {
         if (userData.address)
           throw new Error(
             "기본 배송지 정보를 전부 입력해주시거나 전부 비워주시길 바랍니다\n(이름, 전화번호, 주소)"

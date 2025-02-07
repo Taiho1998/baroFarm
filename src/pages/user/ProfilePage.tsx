@@ -13,12 +13,13 @@ import {
   useOutletContext,
 } from "react-router-dom";
 import { toast } from "react-toastify";
+import { UserStore } from "types";
 
 export default function ProfilePage() {
   const { setHeaderContents } = useOutletContext();
   const navigate = useNavigate();
   const axios = useAxiosInstance();
-  const url = "https://11.fesp.shop";
+  const url: string = "https://11.fesp.shop";
 
   const queryClient = useQueryClient();
 
@@ -26,7 +27,7 @@ export default function ProfilePage() {
   const id = location.state.id;
 
   /// store에서 user 상태를 초기화하는 함수 가져오기
-  const resetUser = useUserStore((store) => store.resetUser);
+  const resetUser = useUserStore((store: UserStore) => store.resetUser);
 
   useEffect(() => {
     setHeaderContents({
@@ -107,7 +108,7 @@ export default function ProfilePage() {
     const isConfirmed = await ShowConfirmToast(
       "프로필 이미지를 변경하시겠습니까?"
     );
-    if (isConfirmed) document.getElementById("profileImgChange").click();
+    if (isConfirmed) document.getElementById("profileImgChange")!.click();
   };
 
   const { data: userData, isLoading } = useQuery({

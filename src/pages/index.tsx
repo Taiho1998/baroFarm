@@ -10,6 +10,7 @@ import Spinner from "@components/Spinner";
 import DataErrorPage from "@pages/DataErrorPage";
 import getMonthlyData from "@utils/getMonthlyData";
 import { Helmet } from "react-helmet-async";
+import { BoardData, ProductData } from "types";
 
 const categories = [
   { title: "제철 과일", image: "/images/menu/Fruit.svg", url: "/menu/fruit" },
@@ -89,30 +90,42 @@ export default function MainPage() {
   console.log(data);
 
   // 캐러셀을 위한 할인 상품 sorting
-  const sortedSaleData = data.toSorted((a, b) => b.extra.sale - a.extra.sale);
-  const saleProducts = sortedSaleData.filter((_, index) => index < 6);
+  const sortedSaleData = data.toSorted(
+    (a: ProductData, b: ProductData) => b.extra.sale - a.extra.sale
+  );
+  const saleProducts = sortedSaleData.filter(
+    (_: ProductData, index: number) => index < 6
+  );
 
   // 인기 상품 렌더링
-  const sortedBestData = data.toSorted((a, b) => b.buyQuantity - a.buyQuantity);
+  const sortedBestData = data.toSorted(
+    (a: ProductData, b: ProductData) => b.buyQuantity - a.buyQuantity
+  );
   const bestProducts = sortedBestData
     // 4개의 상품만 골라서 Product 컴포넌트로 보여준다.
-    .filter((_, index) => index < 4)
-    .map((product) => <Product key={product._id} {...product} />);
+    .filter((_: ProductData, index: number) => index < 4)
+    .map((product: ProductData) => <Product key={product._id} {...product} />);
 
   // 새상품 렌더링
   const filteredNewData = getMonthlyData(data);
   const newProducts = filteredNewData
     // 4개의 상품만 골라서 Product 컴포넌트로 보여준다.
-    .filter((_, index) => index < 4)
-    .map((product) => <Product key={product._id} {...product} />);
+    .filter((_: ProductData, index: number) => index < 4)
+    .map((product: ProductData) => <Product key={product._id} {...product} />);
 
   // 제철 상품 렌더링
-  const filteredOnMonthData = data.filter((item) =>
-    item.extra.bestMonth?.includes(currentMonth)
-  );
+  const filteredOnMonthData = data.filter((item: ProductData) => {
+    if (item.extra.bestMonth) {
+      return item.extra.bestMonth?.includes(currentMonth);
+    } else if (item.extra.bestSeason) {
+      return item.extra.bestSeason?.includes(currentMonth);
+    }
+  });
   const onMonthProducts = filteredOnMonthData
-    .filter((_, index) => index < 6)
-    .map((product) => <ProductBig key={product._id} {...product} />);
+    .filter((_: ProductData, index: number) => index < 6)
+    .map((product: ProductData) => (
+      <ProductBig key={product._id} {...product} />
+    ));
 
   // 게시글 개수에 따라 rows 정하기
   const howManyRows = Math.ceil(board?.length / 3);
@@ -123,8 +136,8 @@ export default function MainPage() {
     >
       {/* 최대 9개까지만 필터링 */}
       {board
-        ?.filter((_, index) => index < 9)
-        .map((item, index) => (
+        ?.filter((_: BoardData, index: number) => index < 9)
+        .map((item: BoardData, index: number) => (
           <img
             key={index}
             src={`https://11.fesp.shop${item.image}`}

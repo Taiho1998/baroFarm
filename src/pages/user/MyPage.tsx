@@ -6,6 +6,7 @@ import useUserStore from "@zustand/useUserStore";
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
+import { user, UserStore } from "types";
 
 export default function MyPage() {
   const { setHeaderContents } = useOutletContext();
@@ -15,7 +16,7 @@ export default function MyPage() {
 
   // zustand store에서 유저 상태 가져옴
   // 유저가 로그인 상태인지 확인하는 용도
-  const user = useUserStore((store) => store.user);
+  const user: user = useUserStore((store: UserStore) => store.user);
 
   const axios = useAxiosInstance();
 
@@ -32,7 +33,7 @@ export default function MyPage() {
   }, []);
 
   /// store에서 user 상태를 초기화하는 함수 가져오기
-  const resetUser = useUserStore((store) => store.resetUser);
+  const resetUser = useUserStore((store: UserStore) => store.resetUser);
 
   const logoutClick = () => {
     //로그아웃 시 캐시 삭제

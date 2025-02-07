@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 
 import HeaderIcon from "@components/HeaderIcon";
@@ -21,7 +21,7 @@ export default function RecentPage() {
     });
   }, []);
 
-  const productsData = JSON.parse(sessionStorage.getItem("productData"));
+  const productsData = JSON.parse(sessionStorage.getItem("productData")!);
 
   return (
     <>

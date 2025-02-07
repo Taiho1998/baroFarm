@@ -2,6 +2,7 @@ import useUserStore from "@zustand/useUserStore";
 import PropTypes from "prop-types";
 import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
+import { user, UserStore } from "types";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -12,6 +13,6 @@ ProtectedRoute.propTypes = {
 };
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const user = useUserStore((store) => store?.user);
+  const user: user = useUserStore((store: UserStore) => store.user);
   return user ? <>{children}</> : <Navigate to="/users/login" />;
 }

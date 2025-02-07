@@ -5,18 +5,30 @@ import { useMutation } from "@tanstack/react-query";
 import useUserStore from "@zustand/useUserStore";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate, useOutletContext } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useOutletContext,
+} from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { toast } from "react-toastify";
+import { UserStore } from "types";
 
 export default function LoginPage() {
+  type LocationState = {
+    from?: string;
+  };
+
+  const location = useLocation() as { state: LocationState | null };
+
   const { setHeaderContents } = useOutletContext();
   const navigate = useNavigate();
 
   // 로그인 정보 저장
   const [rememberMe, setRememberMe] = useState(false);
   // 환경변수에서 시크릿 키 가져오기
-  const SECRET_PW_KEY = import.meta.env.VITE_SECRET_PW_KEY;
+  const SECRET_PW_KEY: string = import.meta.env.VITE_SECRET_PW_KEY;
 
   // 헤더 설정은 컴포넌트 마운트 시에만 실행
   useEffect(() => {
@@ -27,7 +39,7 @@ export default function LoginPage() {
   }, []);
 
   // Zustand store에서 user 상태를 가져옴
-  const user = useUserStore((store) => store.user);
+  const user = useUserStore((store: UserStore) => store.user);
   // 로그인된 사용자가 /login 페이지에 접근하는 것을 방지
   // - user가 null인 경우: 로그인되지 않은 상태 => 로그인 페이지 유지
   // - user가 객체인 경우: 이미 로그인된 상태 => 메인 페이지로
@@ -66,7 +78,7 @@ export default function LoginPage() {
   } = useForm({ mode: "onBlur" });
 
   // store는 zustand에서 상태(state)객체를 나타내기 위해 관용적으로 사용하는 이름
-  const setUser = useUserStore((store) => store.setUser);
+  const setUser = useUserStore((store: UserStore) => store.setUser);
   const axios = useAxiosInstance();
   const login = useMutation({
     mutationFn: (formData) => axios.post("/users/login", formData),

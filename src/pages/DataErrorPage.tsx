@@ -1,5 +1,4 @@
 import { useRouteError, useNavigate } from "react-router-dom";
-import logoImage from "/images/BaroFarmIcon.png";
 import { Helmet } from "react-helmet-async";
 
 export default function DataErrorPage() {
@@ -21,7 +20,7 @@ export default function DataErrorPage() {
           서버에서 예상치 못한 오류가 발생했습니다. <br />
           잠시 후 다시 시도해 주세요.
         </p>
-        <img src={logoImage} className="w-[300px]" />
+        <img src="/images/BaroFarmIcon.png" className="w-[300px]" />
         <button
           className="text-white  bg-btn-primary px-6 py-2 rounded-md"
           onClick={() => navigate(`/`)}
