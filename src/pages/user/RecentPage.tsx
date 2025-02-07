@@ -4,9 +4,10 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import HeaderIcon from "@components/HeaderIcon";
 import Products from "@components/Products";
 import { Helmet } from "react-helmet-async";
+import { SetHeaderContents } from "types";
 
 export default function RecentPage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
 
   useEffect(() => {

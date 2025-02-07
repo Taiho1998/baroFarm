@@ -57,6 +57,15 @@ export interface BoardData {
   _id: number;
 }
 
+export interface OrderData {
+  _id: number;
+  products: ProductData[];
+  state: string;
+  user_id: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export type SetHeaderContents = {
   headerContents: object;
   setHeaderContents: React.Dispatch<React.SetStateAction<object>>;
