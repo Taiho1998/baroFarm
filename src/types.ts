@@ -56,3 +56,8 @@ export interface BoardData {
   user: user;
   _id: number;
 }
+
+export type SetHeaderContents = {
+  headerContents: object;
+  setHeaderContents: React.Dispatch<React.SetStateAction<object>>;
+};

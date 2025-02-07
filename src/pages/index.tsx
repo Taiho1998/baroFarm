@@ -10,7 +10,7 @@ import Spinner from "@components/Spinner";
 import DataErrorPage from "@pages/DataErrorPage";
 import getMonthlyData from "@utils/getMonthlyData";
 import { Helmet } from "react-helmet-async";
-import { BoardData, ProductData } from "types";
+import { BoardData, ProductData, SetHeaderContents } from "types";
 
 const categories = [
   { title: "제철 과일", image: "/images/menu/Fruit.svg", url: "/menu/fruit" },
@@ -35,7 +35,7 @@ export default function MainPage() {
   // axios instance
   const axios = useAxiosInstance();
   // Outlet 컴포넌트로 전달받은 props.setHeaderContents 접근
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
   // 현재 날짜
   const currentMonth = new Date().getMonth() + 1;
