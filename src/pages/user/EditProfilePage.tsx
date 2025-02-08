@@ -8,9 +8,10 @@ import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import { toast } from "react-toastify";
+import { SetHeaderContents, user } from "types";
 
 export default function EditProfilePage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
   const location = useLocation();
   const data = location.state.user;
@@ -26,11 +27,16 @@ export default function EditProfilePage() {
   }, []);
 
   const editUserInfo = useMutation({
-    mutationFn: (formData) => {
+    mutationFn: (
+      formData: {
+        value: string;
+        detailValue: string;
+      } & user
+    ) => {
       const { value, detailValue, ...userData } = formData;
       const count =
-        Number(!!userData.extra.userName) +
-        Number(!!userData.address.trim() || !!value) +
+        Number(!!userData.extra?.userName) +
+        Number(!!userData.address?.trim() || !!value) +
         Number(!!userData.phone);
       if (count === 1 || count === 2) {
         if (userData.address)

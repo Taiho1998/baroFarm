@@ -1,8 +1,10 @@
 import PostcodeSearch from "@components/PostcodeSearch";
-import axios from "axios";
+import { UseMutateFunction } from "@tanstack/react-query";
+import axios, { AxiosResponse } from "axios";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { user } from "types";
 
 UserForm.propTypes = {
   // 수정기능 구현시 기존의 계정 정보를 입력받아올 props - userInfo
@@ -24,7 +26,24 @@ UserForm.propTypes = {
   onSubmitUser: PropTypes.func.isRequired,
 };
 
-export default function UserForm({ userInfo, buttonText, onSubmitUser }) {
+export default function UserForm({
+  userInfo,
+  buttonText,
+  onSubmitUser,
+}: {
+  userInfo: user;
+  buttonText: string;
+  onSubmitUser: UseMutateFunction<
+    AxiosResponse<any, any>,
+    Error,
+    {
+      value: string;
+      detailValue: string;
+      userData: user;
+    },
+    unknown
+  >;
+}) {
   const {
     register,
     handleSubmit,

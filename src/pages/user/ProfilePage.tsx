@@ -13,10 +13,10 @@ import {
   useOutletContext,
 } from "react-router-dom";
 import { toast } from "react-toastify";
-import { UserStore } from "types";
+import { SetHeaderContents, UserStore } from "types";
 
 export default function ProfilePage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
   const axios = useAxiosInstance();
   const url: string = "https://11.fesp.shop";
@@ -37,7 +37,7 @@ export default function ProfilePage() {
   }, []);
 
   // 이미지 파일 유효성 검사
-  const checkImg = (file) => {
+  const checkImg = (file: { type: string }) => {
     const validTypes = [
       "image/jpeg",
       "image/jpg",

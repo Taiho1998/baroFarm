@@ -6,10 +6,10 @@ import useUserStore from "@zustand/useUserStore";
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
-import { user, UserStore } from "types";
+import { SetHeaderContents, user, UserStore } from "types";
 
 export default function MyPage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const url = "https://11.fesp.shop";

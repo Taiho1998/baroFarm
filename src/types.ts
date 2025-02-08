@@ -6,6 +6,16 @@ export type user = {
   email?: string;
   image?: string;
   type?: string;
+  phone?: string;
+  address?: string;
+  extra: UserExtra;
+  password: string;
+};
+
+type UserExtra = {
+  birth?: string;
+  gender?: string;
+  userName?: string;
 };
 
 export interface UserStore {
@@ -48,7 +58,7 @@ export interface ProductData {
 export interface BoardData {
   bookmarks: number;
   content: string;
-  createdAt: string | Date;
+  createdAt: string;
   image?: string;
   repliesCount: number;
   type: string;

@@ -13,7 +13,7 @@ import {
 } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { toast } from "react-toastify";
-import { UserStore } from "types";
+import { SetHeaderContents, UserStore } from "types";
 
 export default function LoginPage() {
   type LocationState = {
@@ -22,7 +22,7 @@ export default function LoginPage() {
 
   const location = useLocation() as { state: LocationState | null };
 
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
 
   // 로그인 정보 저장

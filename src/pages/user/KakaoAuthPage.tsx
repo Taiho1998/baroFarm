@@ -10,13 +10,13 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { toast } from "react-toastify";
-import { UserStore } from "types";
+import { SetHeaderContents, UserStore } from "types";
 
 export default function KakaoAuthPage() {
   const [searchParms] = useSearchParams();
   const axios = useAxiosInstance();
   const setUser = useUserStore((store: UserStore) => store.setUser);
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
 
   // 헤더 설정은 컴포넌트 마운트 시에만 실행
