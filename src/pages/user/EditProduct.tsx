@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 
 export default function EditProduct() {
   const { id } = useParams();
-  const [price, setPrice] = useState();
+  const [price, setPrice] = useState<number>();
   const axios = useAxiosInstance();
   const queryClient = useQueryClient();
   const navigate = useNavigate();

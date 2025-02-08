@@ -10,12 +10,13 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { toast } from "react-toastify";
+import { SetHeaderContents, UserStore } from "types";
 
 export default function KakaoAuthPage() {
   const [searchParms] = useSearchParams();
   const axios = useAxiosInstance();
-  const setUser = useUserStore((store) => store.setUser);
-  const { setHeaderContents } = useOutletContext();
+  const setUser = useUserStore((store: UserStore) => store.setUser);
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
 
   // 헤더 설정은 컴포넌트 마운트 시에만 실행
@@ -28,7 +29,7 @@ export default function KakaoAuthPage() {
   // URL에서 인가코드를 추출하여 카카오 로그인 요청
   useEffect(() => {
     // 1. URL 파라미터에서 인가코드 가져오기
-    const code = searchParms.get("code");
+    const code: string | null = searchParms.get("code");
     // 2. 인가코드가 있으면 카카오 로그인 mutation 실행
     if (code) {
       kakaoLogin.mutate(code);
@@ -36,7 +37,7 @@ export default function KakaoAuthPage() {
   }, [searchParms]);
 
   const kakaoLogin = useMutation({
-    mutationFn: (code) =>
+    mutationFn: (code: string) =>
       axios.post(`/users/login/kakao`, {
         code: code,
         redirect_uri: `${window.location.origin}/users/login/kakao`,
@@ -64,7 +65,7 @@ export default function KakaoAuthPage() {
     },
   });
 
-  if (kakaoLogin.isLoading) {
+  if (kakaoLogin.isPending) {
     return <Spinner />;
   }
 

@@ -10,6 +10,11 @@
   .category-div img {
     @apply rounded-[10px] mb-1 shadow-md;
   }
+
+  /* 사용자 ux 경험을 위해 스크롤바 생성 */
+  body {
+    overflow-y: scroll;
+  }
 }
 
 @layer components {

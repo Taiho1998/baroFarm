@@ -6,16 +6,17 @@ import useUserStore from "@zustand/useUserStore";
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
+import { SetHeaderContents, user, UserStore } from "types";
 
 export default function MyPage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const url = "https://11.fesp.shop";
 
   // zustand store에서 유저 상태 가져옴
   // 유저가 로그인 상태인지 확인하는 용도
-  const user = useUserStore((store) => store.user);
+  const user: user = useUserStore((store: UserStore) => store.user);
 
   const axios = useAxiosInstance();
 
@@ -32,13 +33,13 @@ export default function MyPage() {
   }, []);
 
   /// store에서 user 상태를 초기화하는 함수 가져오기
-  const resetUser = useUserStore((store) => store.resetUser);
+  const resetUser = useUserStore((store: UserStore) => store.resetUser);
 
   const logoutClick = () => {
     //로그아웃 시 캐시 삭제
     resetUser();
     queryClient.clear();
-    navigate("/users/login");
+    navigate("/");
   };
 
   //로그인 시 로그인 화면으로 이동
@@ -169,17 +170,20 @@ export default function MyPage() {
               alt="recentProduct icon"
             />
           </Link>
-          <Link
-            to={"/users/bookmarks"}
-            className="flex items-center text-[14px] mt-[24px]"
-          >
-            찜한 상품
-            <img
-              src="/icons/icon_forward.svg"
-              className="h-[16px] ml-auto"
-              alt="likedProduct icon"
-            />
-          </Link>
+          {/* 로그인한 유저만 찜 기능을 이용할 수 있음. 따라서 찜한 상품 조회 기능은 필요 없음 */}
+          {user && (
+            <Link
+              to={"/users/bookmarks"}
+              className="flex items-center text-[14px] mt-[24px]"
+            >
+              찜한 상품
+              <img
+                src="/icons/icon_forward.svg"
+                className="h-[16px] ml-auto"
+                alt="likedProduct icon"
+              />
+            </Link>
+          )}
         </div>
         {/* 해당 영역은 로그아웃 상태일 시 사용을 필요로 하지 않음 */}
         {user && data?.type === "seller" && (

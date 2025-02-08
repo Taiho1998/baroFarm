@@ -7,9 +7,10 @@ import { useQuery } from "@tanstack/react-query";
 import useAxiosInstance from "@hooks/useAxiosInstance";
 import Spinner from "@components/Spinner";
 import { Helmet } from "react-helmet-async";
+import { BoardData, SetHeaderContents } from "types";
 
 export default function MyPost() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
   const axios = useAxiosInstance();
 
@@ -61,7 +62,7 @@ export default function MyPost() {
   }, {});
   const groupedArray = Object.entries(groupedData).map(([date, items]) => ({
     date,
-    items,
+    items: items as BoardData[],
   }));
 
   const myBoardList = groupedArray.map((data) => {

@@ -1,6 +1,6 @@
 import { RouterProvider } from "react-router-dom";
 import { Suspense } from "react";
-import router from "@/routes";
+import router from "./routes.tsx";
 import { HelmetProvider } from "react-helmet-async";
 
 import Spinner from "@components/Spinner";

@@ -1,5 +1,7 @@
+import { ProductData } from "types";
+
 // 오늘 날짜 기준 30일 내에 등록된 상품만 필터링하는 함수
-const getMonthlyData = (data) => {
+const getMonthlyData = (data: ProductData[]) => {
   // 30일 전을 시작 시간으로 잡는다.
   const beginTime = new Date().getTime() - 2592000 * 1000;
 

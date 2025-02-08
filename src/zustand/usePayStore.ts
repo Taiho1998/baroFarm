@@ -6,7 +6,7 @@ const usePayStore = create(
   persist(
     (set) => ({
       payData: null,
-      setPayData: (payData) => set({ payData }),
+      setPayData: (payData: object) => set({ payData }),
       resetPayData: () => set({ payData: null }),
     }),
     {

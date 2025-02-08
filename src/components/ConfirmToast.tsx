@@ -7,12 +7,17 @@ ConfirmToast.propTypes = {
   resolve: PropTypes.func,
 };
 
-export default function ConfirmToast({ message, resolve }) {
-  const newMessage = message.split("\n").map((line, index) => (
-    <Fragment key={index}>
+interface ConfirmToastProps {
+  message: string;
+  resolve: (value: unknown) => void;
+}
+
+export default function ConfirmToast({ message, resolve }: ConfirmToastProps) {
+  const newMessage = message.split("\n").map((line) => (
+    <>
       {line}
       <br />
-    </Fragment>
+    </>
   ));
 
   return (

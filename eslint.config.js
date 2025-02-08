@@ -3,21 +3,25 @@ import globals from "globals";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
+import ts from "@typescript-eslint/parser"; // 추가된 부분
 
 export default [
   { ignores: ["dist"] },
   {
-    files: ["**/*.{js,jsx}"],
+    files: ["**/*.{js,jsx,ts,tsx}"],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
+      parser: ts, // TypeScript 파서 지정
       parserOptions: {
         ecmaVersion: "latest",
-        ecmaFeatures: { jsx: true },
+        ecmaFeatures: { jsx: true, tsx: true },
         sourceType: "module",
       },
     },
-    settings: { react: { version: "18.3" } },
+    settings: {
+      react: { version: "18.3" },
+    },
     plugins: {
       react,
       "react-hooks": reactHooks,
@@ -34,6 +38,7 @@ export default [
         { allowConstantExport: true },
       ],
       "no-unused-vars": 1,
+      "@typescript-eslint/no-explicit-any": "warn", // @typescript-eslint 규칙
     },
   },
 ];

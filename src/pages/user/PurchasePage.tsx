@@ -8,9 +8,10 @@ import PurchaseItem from "@components/PurchaseItem";
 import Spinner from "@components/Spinner";
 import DataErrorPage from "@pages/DataErrorPage";
 import { Helmet } from "react-helmet-async";
+import { OrderData, ProductData, SetHeaderContents } from "types";
 
 export default function PurchasePage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
 
   const instance = useAxiosInstance();
@@ -52,14 +53,17 @@ export default function PurchasePage() {
     );
   }
 
-  const groupedData = reviewData.reduce((acc, order) => {
-    const date = order.createdAt.split(" ")[0]; // "YYYY.MM.DD" 형식의 날짜 추출
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push(order);
-    return acc;
-  }, {});
+  const groupedData: { [date: string]: OrderData[] } = reviewData.reduce(
+    (acc: { [key: string]: OrderData[] }, order: OrderData) => {
+      const date = new Date(order.createdAt).toLocaleDateString(); // "YYYY.MM.DD" 형식의 날짜 추출
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push(order);
+      return acc;
+    },
+    {}
+  );
 
   return (
     <>
@@ -70,7 +74,7 @@ export default function PurchasePage() {
         {Object.entries(groupedData).map(([date, orders]) => (
           <div key={date} className="mb-5">
             <p className="font-bold text-lg pl-1">{date}</p>
-            {orders.map((order) =>
+            {orders.map((order: OrderData) =>
               order.products.map((product) => (
                 <PurchaseItem
                   key={product._id}

@@ -97,7 +97,7 @@ export default function BoardDetailPage() {
         </div>
         {data.image && (
           <img
-            className="relative mt-10 mb-1 rounded-md"
+            className="relative mt-10 mb-1 rounded-md mx-auto"
             src={`https://11.fesp.shop${data.image}`}
           />
         )}

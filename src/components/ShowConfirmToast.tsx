@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 // Toastify 설정
 
-export default function ShowConfirmToast(message, onConfirm, onCancel) {
+export default function ShowConfirmToast(message: string) {
   return new Promise((resolve) => {
     toast(<ConfirmToast message={message} resolve={resolve} />, {
       position: "top-center",
