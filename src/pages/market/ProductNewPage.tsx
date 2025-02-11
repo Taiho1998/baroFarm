@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { toast } from "react-toastify";
-import { ProductData, SetHeaderContents } from "types";
+import { SetHeaderContents } from "types";
 
 export default function ProductNewPage() {
   const {
@@ -28,32 +28,36 @@ export default function ProductNewPage() {
 
   class extra {
     constructor(
-      isNew: boolean,
-      isBest: boolean,
-      bestSeason: number[],
-      category: string,
-      sort: number,
-      depth: number,
-      sale: number,
-      saledPrice: number,
-      rating: number
+      protected isNew: boolean,
+      protected isBest: boolean,
+      protected bestSeason: number[],
+      protected category: string,
+      protected sort: number,
+      protected depth: number,
+      protected sale: number,
+      protected saledPrice: number,
+      protected rating: number
+    ) {}
+  }
+
+  class mainImage {
+    constructor(
+      public path: string,
+      public name: string,
+      public originalname: string
     ) {}
   }
 
   class product {
     constructor(
-      name: string,
-      content: string,
-      price: number,
-      shippingFees: number,
-      quantity: number,
-      extra: object,
-      mainImages: object
+      protected name: string,
+      protected content: string,
+      protected price: number,
+      protected shippingFees: number,
+      protected quantity: number,
+      protected extra: object,
+      protected mainImages: object
     ) {}
-  }
-
-  class mainImage {
-    constructor(path: string, name: string, originalname: string) {}
   }
 
   // div 내에 입력한 input & select 태그의 value 변경을 위함
@@ -65,7 +69,7 @@ export default function ProductNewPage() {
   const axios = useAxiosInstance();
 
   //업로드되는 파일은 이미지 파일로 제한
-  const checkImg = (file: { type: string }) => {
+  const checkImg = (file: File) => {
     const validTypes = [
       "image/jpeg",
       "image/jpg",
@@ -84,7 +88,7 @@ export default function ProductNewPage() {
   //이미지 업로드와 카테고리 조회를 먼저 실행한 후 해당 함수에서 반환된 값을 가지고 body객체를 생성
   const addProduct = useMutation({
     mutationFn: async (item: {
-      image: { type: string }[];
+      image: File[];
       category: string;
       seasonStart: string;
       seasonEnd: string;
@@ -97,8 +101,6 @@ export default function ProductNewPage() {
       let imageName = "";
       let imageOriginalName = "";
 
-      console.log("image", typeof item.image[0], typeof item, item);
-
       // 이미지 파일 확인 절차
       if (checkImg(item.image[0])) {
         throw new Error("이미지 파일을 업로드해야 합니다");
@@ -106,8 +108,7 @@ export default function ProductNewPage() {
       // 이미지 첨부는 필수이므로 이미지 첨부가 되어있지 않다면 아예 생성되지 않음
       if (item.image && item.image[0]) {
         const formData = new FormData();
-        const formImage = new Blob([""], item.image[0]);
-        formData.append("attach", formImage);
+        formData.append("attach", item.image[0]);
         try {
           const uploadImg = await axios.post(`/files`, formData, {
             headers: {
@@ -117,6 +118,7 @@ export default function ProductNewPage() {
           imageUrl = uploadImg.data.item[0].path; // 서버에서 반환된 이미지 URL
           imageName = uploadImg.data.item[0].name; // 서버에서 반환된 이미지 이름
           imageOriginalName = uploadImg.data.item[0].originalname; // 서버에서 반환된 이미지 원본 이름
+          console.log("반환 데이터", imageUrl, imageName, imageOriginalName);
         } catch (error) {
           console.error(
             "Image upload failed:",
@@ -135,6 +137,8 @@ export default function ProductNewPage() {
           imageName,
           imageOriginalName
         );
+
+        console.log(mainImages);
 
         const bodyExtra = new extra(
           true,
@@ -191,7 +195,7 @@ export default function ProductNewPage() {
         //     originalname: imageOriginalName,
         //   },
         // };
-        // return axios.post("/seller/products", body);
+        return axios.post("/seller/products", body);
       }
     },
     onSuccess: () => {
