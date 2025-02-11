@@ -13,12 +13,14 @@ interface ConfirmToastProps {
 }
 
 export default function ConfirmToast({ message, resolve }: ConfirmToastProps) {
-  const newMessage = message.split("\n").map((line) => (
-    <>
-      {line}
-      <br />
-    </>
-  ));
+  const newMessage = message.split("\n").map((line, index) => {
+    return (
+      <Fragment key={index}>
+        {line}
+        <br />
+      </Fragment>
+    );
+  });
 
   return (
     <div>
