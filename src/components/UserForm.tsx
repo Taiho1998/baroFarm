@@ -39,8 +39,7 @@ export default function UserForm({
     {
       value: string;
       detailValue: string;
-      userData: user;
-    },
+    } & user,
     unknown
   >;
 }) {
