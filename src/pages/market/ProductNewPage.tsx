@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { toast } from "react-toastify";
+import { ProductData, SetHeaderContents } from "types";
 
 export default function ProductNewPage() {
   const {
@@ -15,7 +16,7 @@ export default function ProductNewPage() {
     formState: { errors },
     setValue,
   } = useForm();
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -25,8 +26,38 @@ export default function ProductNewPage() {
     });
   }, []);
 
+  class extra {
+    constructor(
+      isNew: boolean,
+      isBest: boolean,
+      bestSeason: number[],
+      category: string,
+      sort: number,
+      depth: number,
+      sale: number,
+      saledPrice: number,
+      rating: number
+    ) {}
+  }
+
+  class product {
+    constructor(
+      name: string,
+      content: string,
+      price: number,
+      shippingFees: number,
+      quantity: number,
+      extra: object,
+      mainImages: object
+    ) {}
+  }
+
+  class mainImage {
+    constructor(path: string, name: string, originalname: string) {}
+  }
+
   // div 내에 입력한 input & select 태그의 value 변경을 위함
-  const [price, setPrice] = useState();
+  const [price, setPrice] = useState<number>(0);
 
   const queryClient = useQueryClient();
 
@@ -34,7 +65,7 @@ export default function ProductNewPage() {
   const axios = useAxiosInstance();
 
   //업로드되는 파일은 이미지 파일로 제한
-  const checkImg = (file) => {
+  const checkImg = (file: { type: string }) => {
     const validTypes = [
       "image/jpeg",
       "image/jpg",
@@ -52,10 +83,21 @@ export default function ProductNewPage() {
   //상품 추가 함수
   //이미지 업로드와 카테고리 조회를 먼저 실행한 후 해당 함수에서 반환된 값을 가지고 body객체를 생성
   const addProduct = useMutation({
-    mutationFn: async (item) => {
-      let imageUrl = null;
-      let imageName = null;
-      let imageOriginalName = null;
+    mutationFn: async (item: {
+      image: { type: string }[];
+      category: string;
+      seasonStart: string;
+      seasonEnd: string;
+      sale: string;
+      name: string;
+      content: string;
+      quantity: string;
+    }) => {
+      let imageUrl = "";
+      let imageName = "";
+      let imageOriginalName = "";
+
+      console.log("image", typeof item.image[0], typeof item, item);
 
       // 이미지 파일 확인 절차
       if (checkImg(item.image[0])) {
@@ -64,7 +106,8 @@ export default function ProductNewPage() {
       // 이미지 첨부는 필수이므로 이미지 첨부가 되어있지 않다면 아예 생성되지 않음
       if (item.image && item.image[0]) {
         const formData = new FormData();
-        formData.append("attach", item.image[0]);
+        const formImage = new Blob([""], item.image[0]);
+        formData.append("attach", formImage);
         try {
           const uploadImg = await axios.post(`/files`, formData, {
             headers: {
@@ -84,40 +127,71 @@ export default function ProductNewPage() {
         const codes = await axios.get("/codes");
         const categoryList = codes.data.item.nested.productCategory.codes;
         const category = categoryList.filter(
-          (data) => data.code == item.category
+          (data: { code: string }) => data.code == item.category
         );
 
-        const body = {
-          name: item.name,
-          content: `<p>${item.content}</p>`,
-          price: price,
-          shippingFees: price <= 35000 ? 2500 : 0,
-          quantity: parseInt(item.quantity),
-          extra: {
-            isNew: true,
-            isBest: false,
-            bestSeason:
-              item.seasonStart !== item.seasonEnd
-                ? [parseInt(item.seasonStart), parseInt(item.seasonEnd)]
-                : [parseInt(item.seasonStart)], // 두 제철 값이 같은 경우에는 값 하나만 입력되게 함
-            category: category[0].code,
-            sort: category[0].sort,
-            depth: category[0].depth,
-            sale: item.sale ? parseInt(item.sale) : 0,
-            saledPrice:
-              Math.round(
-                (price * (1 - (item.sale ? parseInt(item.sale) : 0) / 100)) / 10
-              ) * 10,
-            // 새로운 상품이므로 평점은 0으로 초기화
-            rating: 0,
-          },
-          mainImages: {
-            path: imageUrl,
-            name: imageName,
-            originalname: imageOriginalName,
-          },
-        };
-        return axios.post("/seller/products", body);
+        const mainImages = new mainImage(
+          imageUrl,
+          imageName,
+          imageOriginalName
+        );
+
+        const bodyExtra = new extra(
+          true,
+          false,
+          item.seasonStart !== item.seasonEnd
+            ? [parseInt(item.seasonStart), parseInt(item.seasonEnd)]
+            : [parseInt(item.seasonStart)],
+          category[0].code,
+          category[0].sort,
+          category[0].depth,
+          item.sale ? parseInt(item.sale) : 0,
+          Math.round(
+            (price * (1 - (item.sale ? parseInt(item.sale) : 0) / 100)) / 10
+          ) * 10,
+          0
+        );
+
+        const body = new product(
+          item.name,
+          `<p>${item.content}</p>`,
+          price,
+          price <= 35000 ? 2500 : 0,
+          parseInt(item.quantity),
+          bodyExtra,
+          mainImages
+        );
+        // const body = {
+        //   name: item.name,
+        //   content: `<p>${item.content}</p>`,
+        //   price: price,
+        //   shippingFees: price <= 35000 ? 2500 : 0,
+        //   quantity: parseInt(item.quantity),
+        //   extra: {
+        //     isNew: true,
+        //     isBest: false,
+        //     bestSeason:
+        //       item.seasonStart !== item.seasonEnd
+        //         ? [parseInt(item.seasonStart), parseInt(item.seasonEnd)]
+        //         : [parseInt(item.seasonStart)], // 두 제철 값이 같은 경우에는 값 하나만 입력되게 함
+        //     category: category[0].code,
+        //     sort: category[0].sort,
+        //     depth: category[0].depth,
+        //     sale: item.sale ? parseInt(item.sale) : 0,
+        //     saledPrice:
+        //       Math.round(
+        //         (price * (1 - (item.sale ? parseInt(item.sale) : 0) / 100)) / 10
+        //       ) * 10,
+        //     // 새로운 상품이므로 평점은 0으로 초기화
+        //     rating: 0,
+        //   },
+        //   mainImages: {
+        //     path: imageUrl,
+        //     name: imageName,
+        //     originalname: imageOriginalName,
+        //   },
+        // };
+        // return axios.post("/seller/products", body);
       }
     },
     onSuccess: () => {
