@@ -31,15 +31,15 @@ export default function UserForm({
   buttonText,
   onSubmitUser,
 }: {
-  userInfo: user;
+  userInfo?: user;
   buttonText: string;
   onSubmitUser: UseMutateFunction<
     AxiosResponse<any, any>,
     Error,
-    {
-      value: string;
-      detailValue: string;
-    } & user,
+    | {
+        value: string;
+        detailValue: string;
+      } & user,
     unknown
   >;
 }) {

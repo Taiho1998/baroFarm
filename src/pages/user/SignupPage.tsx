@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { toast } from "react-toastify";
-import { SetHeaderContents } from "types";
+import { SetHeaderContents, user } from "types";
 
 export default function SignupPage() {
   const { setHeaderContents } = useOutletContext<SetHeaderContents>();
@@ -14,7 +14,8 @@ export default function SignupPage() {
 
   const axios = useAxiosInstance();
   const handleSignup = useMutation({
-    mutationFn: (formData) => axios.post("/users", formData),
+    mutationFn: (formData: { value: string; detailValue: string } & user) =>
+      axios.post("/users", formData),
     onSuccess: () => {
       // console.log("회원가입 성공 데이터:", res.data);
       toast.success("회원가입이 완료되었습니다.");
