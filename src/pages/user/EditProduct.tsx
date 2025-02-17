@@ -5,17 +5,18 @@ import useAxiosInstance from "@hooks/useAxiosInstance";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ProductData, SetHeaderContents } from "types";
 
 export default function EditProduct() {
   const { id } = useParams();
-  const [price, setPrice] = useState<number>();
+  const [price, setPrice] = useState<number>(0);
   const axios = useAxiosInstance();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
 
   useEffect(() => {
     setHeaderContents({
@@ -43,12 +44,21 @@ export default function EditProduct() {
   });
 
   const patchProduct = useMutation({
-    mutationFn: async (item) => {
+    mutationFn: async (item: {
+      category: string;
+      name: string;
+      content: string;
+      quantity: string;
+      seasonStart: string;
+      seasonEnd: string;
+      sale: string;
+      FieldValues: SubmitHandler<FieldValues>;
+    }) => {
       const codes = await axios.get("/codes");
       const categoryList = codes.data.item.nested.productCategory.codes;
       setPrice(data.price);
       const category = categoryList.filter(
-        (data) => data.code == item.category
+        (data: { code: string }) => data.code == item.category
       );
       const body = {
         name: item.name,
@@ -80,7 +90,7 @@ export default function EditProduct() {
       navigate("/users/sale", { replace: true });
     },
     onError: (err) => {
-      console.err(err);
+      console.error(err);
       toast.error("에러 메시지: ", err);
     },
   });

@@ -53,6 +53,7 @@ export interface ProductData {
   shippingFees: number;
   updatedAt: string | Date;
   _id: number;
+  content: string;
 }
 
 export interface BoardData {
