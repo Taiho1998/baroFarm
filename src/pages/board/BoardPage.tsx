@@ -14,17 +14,21 @@ import {
   useOutletContext,
   useSearchParams,
 } from "react-router-dom";
+import { SetHeaderContents } from "types";
 
 export default function BoardPage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
   const { user } = useUserStore();
   const [isLogin, setIsLogin] = useState(true);
+  const [boardsLoading, setBoardsLoading] = useState(false);
   const axios = useAxiosInstance();
   const [searchParams, setSearchParams] = useSearchParams();
   const keyword = searchParams.get("keyword") || ""; // URL에서 keyword 가져오기
   const [page, setPage] = useState(1);
   const postsPerPage = 10;
+
+  //Intersection Observer 설정
 
   useEffect(() => {
     setHeaderContents({
@@ -49,7 +53,7 @@ export default function BoardPage() {
     queryKey: ["posts", "community", keyword],
     queryFn: () =>
       axios.get(`/posts`, {
-        params: { type: "community", keyword: keyword, limit: 10 },
+        params: { type: "community", keyword: keyword },
       }),
     select: (res) => res.data.item,
     staleTime: 1000 * 10,
@@ -60,7 +64,7 @@ export default function BoardPage() {
     queryKey: ["posts", "noPic", keyword],
     queryFn: () =>
       axios.get(`/posts`, {
-        params: { type: "noPic", keyword: keyword, limit: 10 },
+        params: { type: "noPic", keyword: keyword },
       }),
     select: (res) => res.data.item,
     staleTime: 1000 * 10,
@@ -92,14 +96,13 @@ export default function BoardPage() {
 
   // 페이지에 맞는 데이터 계산
   const indexOfLastPost = page * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = sortedData.slice(indexOfFirstPost, indexOfLastPost);
+  const currentPosts = sortedData.slice(0, indexOfLastPost);
 
   const totalPages = Math.ceil(sortedData.length / postsPerPage);
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = (newPage: number) => {
     setPage(newPage);
-    window.scrollTo({ top: 0 });
+    // window.scrollTo({ top: 0 });
   };
 
   const boards = currentPosts?.map((item) => (
@@ -185,6 +188,7 @@ export default function BoardPage() {
           />
         </div>
       </div>
+      {boardsLoading && <p>로딩 중...</p>}
     </>
   );
 }

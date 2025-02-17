@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { useEffect, useRef, useState } from "react";
 
 Pagination.propTypes = {
   page: PropTypes.number.isRequired,
@@ -6,10 +7,48 @@ Pagination.propTypes = {
   totalPages: PropTypes.number.isRequired,
 };
 
-export default function Pagination({ page, handlePageChange, totalPages }) {
+export default function Pagination({
+  page,
+  handlePageChange,
+  totalPages,
+}: {
+  page: number;
+  handlePageChange: Function;
+  totalPages: number;
+}) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleObserver = (entries: IntersectionObserverEntry[]) => {
+    const target = entries[0];
+    if (target.isIntersecting && !isLoading && page < totalPages) {
+      setIsLoading(true);
+      handlePageChange(page + 1); // 페이지가 무한하게 증가하는 것을 방지
+    }
+  };
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, {
+      threshold: 1,
+    });
+    // 최하단 요소를 관찰 대상으로 지정함
+    const observerTarget = document.getElementById("observer");
+    // 관찰 시작
+
+    if (observerTarget) {
+      observer.observe(observerTarget);
+    }
+
+    return () => {
+      observer.disconnect(); // 기존 observer 해제
+    };
+  }, [page, totalPages, isLoading]);
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, [page]);
+
   return (
     <>
-      <button
+      {/* <button
         disabled={page === 1}
         onClick={() => handlePageChange(page - 1)}
         className="px-3 py-1 mx-1 text-sm bg-gray2 rounded-md disabled:opacity-50"
@@ -33,7 +72,10 @@ export default function Pagination({ page, handlePageChange, totalPages }) {
         className="px-3 py-1 mx-1 text-sm bg-gray2 rounded-md disabled:opacity-50"
       >
         다음
-      </button>
+      </button> */}
+      <div id="observer" className="h-[10px]">
+        {page < totalPages ? `10개 더 보기` : "더이상 페이지가 없습니다"}
+      </div>
     </>
   );
 }
