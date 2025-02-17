@@ -93,7 +93,7 @@ export default function LoginPage() {
   const setUser = useUserStore((store: UserStore) => store.setUser);
   const axios = useAxiosInstance();
   const login = useMutation({
-    mutationFn: (formData) => axios.post("/users/login", formData),
+    mutationFn: (formData: FieldValues) => axios.post("/users/login", formData),
     onSuccess: (res) => {
       // console.log(res);
 
@@ -197,7 +197,7 @@ export default function LoginPage() {
         </div>
 
         {/* 폼 영역 */}
-        <form onSubmit={handleSubmit(login.mutate)}>
+        <form onSubmit={handleSubmit((data) => login.mutate(data, undefined))}>
           <div className="border-b-2 border-gray2 mb-8 focus-within:border-b-btn-primary">
             <input
               type="email"
