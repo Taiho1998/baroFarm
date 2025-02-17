@@ -1,9 +1,10 @@
 import HeaderIcon from "@components/HeaderIcon";
 import { useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { SetHeaderContents } from "types";
 
 export default function ProductMyReviewPage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
   useEffect(() => {
     setHeaderContents({

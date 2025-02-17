@@ -10,12 +10,23 @@ import { toast } from "react-toastify";
 import { SetHeaderContents } from "types";
 
 export default function ProductNewPage() {
+  type ProductNewForm = {
+    image?: File[];
+    category: string;
+    seasonStart: string;
+    seasonEnd: string;
+    sale: string;
+    name: string;
+    content: string;
+    quantity: string;
+  };
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm();
+  } = useForm<ProductNewForm>();
   const { setHeaderContents } = useOutletContext<SetHeaderContents>();
 
   const navigate = useNavigate();
@@ -87,22 +98,13 @@ export default function ProductNewPage() {
   //상품 추가 함수
   //이미지 업로드와 카테고리 조회를 먼저 실행한 후 해당 함수에서 반환된 값을 가지고 body객체를 생성
   const addProduct = useMutation({
-    mutationFn: async (item: {
-      image: File[];
-      category: string;
-      seasonStart: string;
-      seasonEnd: string;
-      sale: string;
-      name: string;
-      content: string;
-      quantity: string;
-    }) => {
+    mutationFn: async (item: ProductNewForm) => {
       let imageUrl = "";
       let imageName = "";
       let imageOriginalName = "";
 
       // 이미지 파일 확인 절차
-      if (checkImg(item.image[0])) {
+      if (item.image && checkImg(item.image[0])) {
         throw new Error("이미지 파일을 업로드해야 합니다");
       }
       // 이미지 첨부는 필수이므로 이미지 첨부가 되어있지 않다면 아예 생성되지 않음
@@ -122,7 +124,8 @@ export default function ProductNewPage() {
         } catch (error) {
           console.error(
             "Image upload failed:",
-            error.response?.data || error.message
+            (error as { response: { data: string } }).response?.data ||
+              (error as { message: string }).message
           );
           throw new Error("Image upload failed.");
         }
@@ -165,36 +168,6 @@ export default function ProductNewPage() {
           bodyExtra,
           mainImages
         );
-        // const body = {
-        //   name: item.name,
-        //   content: `<p>${item.content}</p>`,
-        //   price: price,
-        //   shippingFees: price <= 35000 ? 2500 : 0,
-        //   quantity: parseInt(item.quantity),
-        //   extra: {
-        //     isNew: true,
-        //     isBest: false,
-        //     bestSeason:
-        //       item.seasonStart !== item.seasonEnd
-        //         ? [parseInt(item.seasonStart), parseInt(item.seasonEnd)]
-        //         : [parseInt(item.seasonStart)], // 두 제철 값이 같은 경우에는 값 하나만 입력되게 함
-        //     category: category[0].code,
-        //     sort: category[0].sort,
-        //     depth: category[0].depth,
-        //     sale: item.sale ? parseInt(item.sale) : 0,
-        //     saledPrice:
-        //       Math.round(
-        //         (price * (1 - (item.sale ? parseInt(item.sale) : 0) / 100)) / 10
-        //       ) * 10,
-        //     // 새로운 상품이므로 평점은 0으로 초기화
-        //     rating: 0,
-        //   },
-        //   mainImages: {
-        //     path: imageUrl,
-        //     name: imageName,
-        //     originalname: imageOriginalName,
-        //   },
-        // };
         return axios.post("/seller/products", body);
       }
     },
@@ -205,7 +178,7 @@ export default function ProductNewPage() {
       navigate("/users/mypage");
     },
     onError: (error) => {
-      setValue("image", null);
+      setValue("image", undefined);
       console.error("에러 발생: ", error.message);
       toast.error(`에러: ${error.message}`);
     },
@@ -218,7 +191,9 @@ export default function ProductNewPage() {
       </Helmet>
       <ProductInfoForm
         register={register}
-        handlesubmit={handleSubmit(addProduct.mutate)}
+        handlesubmit={handleSubmit((data) =>
+          addProduct.mutate(data, undefined)
+        )}
         errors={errors}
         price={price}
         setPrice={setPrice}

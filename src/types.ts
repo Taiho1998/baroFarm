@@ -36,6 +36,7 @@ type extra = {
   sale: number;
   saledPrice: number;
   rating: number;
+  image: mainImages;
 };
 
 export interface ProductData {
@@ -82,3 +83,16 @@ export type SetHeaderContents = {
   headerContents: object;
   setHeaderContents: React.Dispatch<React.SetStateAction<object>>;
 };
+
+export interface ReviewData {
+  _id: number;
+  user_id: number;
+  user: user;
+  order_id: number;
+  product_id: number;
+  rating: 1 | 2 | 3 | 4 | 5;
+  content: string;
+  createdAt: string;
+  extra: extra;
+  product: ProductData;
+}

@@ -7,9 +7,10 @@ import DataErrorPage from "@pages/DataErrorPage";
 import getMonthlyData from "@utils/getMonthlyData";
 import useAxiosInstance from "@hooks/useAxiosInstance";
 import { useQuery } from "@tanstack/react-query";
+import { SetHeaderContents } from "types";
 
 export default function SearchNewPage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
 
   useEffect(() => {

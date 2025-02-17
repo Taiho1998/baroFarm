@@ -23,6 +23,7 @@ import HeaderIcon from "@components/HeaderIcon";
 import DataErrorPage from "@pages/DataErrorPage";
 import { Helmet } from "react-helmet-async";
 import ShowConfirmToast from "@components/ShowConfirmToast";
+import { ProductData, SetHeaderContents } from "types";
 
 const likeIcon = {
   default: "/icons/icon_likeHeart_no.svg",
@@ -32,7 +33,7 @@ const likeIcon = {
 export default function ProductDetailPage() {
   const { _id } = useParams();
 
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
 
   const instance = useAxiosInstance();
@@ -61,7 +62,9 @@ export default function ProductDetailPage() {
   });
 
   if (!!product) {
-    let productData = JSON.parse(sessionStorage.getItem("productData"));
+    let productData = JSON.parse(
+      sessionStorage.getItem("productData") as string
+    );
 
     // 맨 처음 값 초기화
     if (!Array.isArray(productData)) {
@@ -70,7 +73,7 @@ export default function ProductDetailPage() {
 
     // 중복된 객체를 제거
     productData = productData.filter(
-      (item) => item && item._id !== product._id
+      (item: ProductData) => item && item._id !== product._id
     );
 
     // 새로운 상품 추가
