@@ -73,8 +73,8 @@ export default function Pagination({
       >
         다음
       </button> */}
-      <div id="observer" className="h-[10px]">
-        {page < totalPages ? `10개 더 보기` : "더이상 페이지가 없습니다"}
+      <div id="observer" className="h-[20px]">
+        {page < totalPages ? `10개 더 보기` : "마지막 게시글입니다!"}
       </div>
     </>
   );
