@@ -1,5 +1,6 @@
 import Product from "@components/Product";
 import PropTypes from "prop-types";
+import { ProductData } from "types";
 
 Products.propTypes = {
   productsData: PropTypes.arrayOf(
@@ -9,7 +10,11 @@ Products.propTypes = {
   ).isRequired,
 };
 
-export default function Products({ productsData }) {
+export default function Products({
+  productsData,
+}: {
+  productsData: ProductData[];
+}) {
   // console.log(productsData);
   return (
     <div className="grid grid-cols-2 justify-between p-5 gap-5">

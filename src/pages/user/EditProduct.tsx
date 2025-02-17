@@ -18,6 +18,16 @@ export default function EditProduct() {
   const navigate = useNavigate();
   const { setHeaderContents } = useOutletContext<SetHeaderContents>();
 
+  type productForm = {
+    category: string;
+    name: string;
+    content: string;
+    quantity: string;
+    seasonStart: string;
+    seasonEnd: string;
+    sale: string;
+  };
+
   useEffect(() => {
     setHeaderContents({
       leftChild: <HeaderIcon name="back" onClick={() => navigate(-1)} />,
@@ -34,7 +44,7 @@ export default function EditProduct() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<productForm>();
 
   const { data, isLoading } = useQuery({
     queryKey: ["products", id],
@@ -44,16 +54,7 @@ export default function EditProduct() {
   });
 
   const patchProduct = useMutation({
-    mutationFn: async (item: {
-      category: string;
-      name: string;
-      content: string;
-      quantity: string;
-      seasonStart: string;
-      seasonEnd: string;
-      sale: string;
-      FieldValues: SubmitHandler<FieldValues>;
-    }) => {
+    mutationFn: async (item: productForm) => {
       const codes = await axios.get("/codes");
       const categoryList = codes.data.item.nested.productCategory.codes;
       setPrice(data.price);
@@ -91,7 +92,7 @@ export default function EditProduct() {
     },
     onError: (err) => {
       console.error(err);
-      toast.error("에러 메시지: ", err);
+      toast.error(`에러 메시지: ${err}`);
     },
   });
 
@@ -106,7 +107,9 @@ export default function EditProduct() {
       </Helmet>
       <ProductInfoForm
         register={register}
-        handlesubmit={handleSubmit(patchProduct.mutate)}
+        handlesubmit={handleSubmit((data) =>
+          patchProduct.mutate(data, undefined)
+        )}
         errors={errors}
         price={price}
         setPrice={setPrice}

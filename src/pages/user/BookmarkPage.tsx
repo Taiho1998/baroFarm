@@ -8,7 +8,7 @@ import Products from "@components/Products";
 import Spinner from "@components/Spinner";
 import { Helmet } from "react-helmet-async";
 import DataErrorPage from "@pages/DataErrorPage";
-import { SetHeaderContents } from "types";
+import { ProductData, SetHeaderContents } from "types";
 
 export default function BookmarkPage() {
   const { setHeaderContents } = useOutletContext<SetHeaderContents>();
@@ -42,10 +42,11 @@ export default function BookmarkPage() {
   if (isLoading) return <Spinner />;
   if (isError) return <DataErrorPage />;
 
+  console.log("찜", likeItem);
+
   const likeProducts = !!likeItem
-    ? Object.values(likeItem).filter(
-        (item: { myBookmarkId: number }) =>
-          item && item.myBookmarkId !== undefined
+    ? Object.values(likeItem as { item: ProductData }).filter(
+        (item) => item && item.myBookmarkId !== undefined
       )
     : [];
 

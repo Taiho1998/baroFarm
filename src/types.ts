@@ -41,6 +41,7 @@ type extra = {
 export interface ProductData {
   bookmarks: number;
   buyQuantity: number;
+  myBookmarkId: number;
   createdAt: string | Date;
   name: string;
   price: number;
