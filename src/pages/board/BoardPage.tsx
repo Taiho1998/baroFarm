@@ -14,7 +14,7 @@ import {
   useOutletContext,
   useSearchParams,
 } from "react-router-dom";
-import { SetHeaderContents } from "types";
+import { BoardData, SetHeaderContents } from "types";
 
 export default function BoardPage() {
   const { setHeaderContents } = useOutletContext<SetHeaderContents>();
@@ -49,7 +49,10 @@ export default function BoardPage() {
   }, []);
 
   // 사진을 포함한 게시글
-  const { data: communityBoard, isLoading } = useQuery({
+  const {
+    data: communityBoard,
+    isLoading,
+  }: { data?: BoardData; isLoading: boolean } = useQuery({
     queryKey: ["posts", "community", keyword],
     queryFn: () =>
       axios.get(`/posts`, {
@@ -60,7 +63,10 @@ export default function BoardPage() {
   });
 
   // 사진을 포함하지 않은 게시글
-  const { data: noPicBoard, isLoading: isLoading2 } = useQuery({
+  const {
+    data: noPicBoard,
+    isLoading: isLoading2,
+  }: { data?: BoardData; isLoading: boolean } = useQuery({
     queryKey: ["posts", "noPic", keyword],
     queryFn: () =>
       axios.get(`/posts`, {
@@ -74,10 +80,15 @@ export default function BoardPage() {
     return <Spinner />;
   }
 
-  const mergeData = [...communityBoard, ...noPicBoard];
+  const mergeData: BoardData[] = [
+    ...(Array.isArray(communityBoard) ? communityBoard : []),
+    ...(Array.isArray(noPicBoard) ? noPicBoard : []),
+  ];
   const sortedData = mergeData.sort((prev, next) => next._id - prev._id);
 
-  const handleClick = async (event) => {
+  const handleClick = async (
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
     event.preventDefault();
     const isConfirmed = await ShowConfirmToast(
       "로그인 후 이용 가능합니다.\n로그인 페이지로 이동하시겠습니까?"
@@ -87,10 +98,10 @@ export default function BoardPage() {
     }
   };
 
-  const searchKeyword = (e) => {
+  const searchKeyword = (e: React.FormEvent<HTMLFormElement>) => {
     // 폼에서 name="keyword"인 입력값을 가져와 앞뒤 공백 제거
     e.preventDefault();
-    const searchWord = e.target.keyword.value.trim();
+    const searchWord = (e.target as HTMLFormElement).keyword.value.trim();
     setSearchParams({ keyword: searchWord }); // URL에 keyword 저장
   };
 
@@ -175,7 +186,7 @@ export default function BoardPage() {
         )}
         <Link
           to={isLogin ? "new" : ""}
-          onClick={!isLogin ? (event) => handleClick(event) : null}
+          onClick={!isLogin ? (event) => handleClick(event) : undefined}
           className="fixed right-[calc(50%-155px)] bottom-[150px] w-[40px] h-[40px] rounded-full shadow-bottom"
         >
           <img src="/icons/icon_newpost.svg" className="w-full h-full" />

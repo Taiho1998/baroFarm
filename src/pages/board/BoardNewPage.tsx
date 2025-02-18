@@ -4,18 +4,24 @@ import useAxiosInstance from "@hooks/useAxiosInstance";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { useForm } from "react-hook-form";
+import { FieldValue, useForm } from "react-hook-form";
 import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import { toast } from "react-toastify";
+import { SetHeaderContents } from "types";
+
+interface formData {
+  content: string;
+  image: File[];
+}
 
 export default function BoardNewPage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<formData>();
   const isBoard = true;
   const queryClient = useQueryClient();
 
@@ -29,7 +35,7 @@ export default function BoardNewPage() {
   }, []);
 
   //업로드되는 파일은 이미지 파일로 제한
-  const checkImg = (file) => {
+  const checkImg = (file: File) => {
     const validTypes = [
       "image/jpeg",
       "image/jpg",
@@ -45,7 +51,7 @@ export default function BoardNewPage() {
   };
 
   const addItem = useMutation({
-    mutationFn: async (item) => {
+    mutationFn: async (item: formData) => {
       let imageUrl = null;
 
       if (!item.content) {
@@ -71,7 +77,8 @@ export default function BoardNewPage() {
         } catch (error) {
           console.error(
             "Image upload failed:",
-            error.response?.data || error.message
+            (error as { response: { data: string } }).response?.data ||
+              (error as { message: string }).message
           );
           throw new Error("Image upload failed.");
         }
@@ -98,11 +105,12 @@ export default function BoardNewPage() {
         replace: true,
       });
     },
-    onError: (err) => {
+    onError: (err: Error | unknown) => {
       console.error(err);
-      const errorMessage = err.response
-        ? err.response.data.errors[0].msg
-        : err.message.replace(/^Error:\s*/, "");
+      const errorMessage = (err as { response: object }).response
+        ? (err as { response: { data: { errors: { msg: string }[] } } })
+            .response.data.errors[0].msg
+        : (err as { message: string }).message.replace(/^Error:\s*/, "");
 
       toast.error(errorMessage);
     },
@@ -115,7 +123,7 @@ export default function BoardNewPage() {
       </Helmet>
       <NewPost
         isBoard={isBoard}
-        handleSubmit={handleSubmit(addItem.mutate)}
+        handleSubmit={handleSubmit((data) => addItem.mutate(data, undefined))}
         register={register}
         errors={errors}
       ></NewPost>

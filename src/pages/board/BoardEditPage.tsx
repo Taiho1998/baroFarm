@@ -14,16 +14,22 @@ import {
   useParams,
 } from "react-router-dom";
 import { toast } from "react-toastify";
+import { SetHeaderContents } from "types";
+
+interface FormData {
+  content: string;
+  image: File[];
+}
 
 export default function BoardEditPage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
   const location = useLocation();
   const data = location.state.data;
   const { _id } = useParams();
   const axios = useAxiosInstance();
   const queryClient = useQueryClient();
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm<FormData>();
   useEffect(() => {
     setHeaderContents({
       leftChild: <HeaderIcon name="back" onClick={() => navigate(-1)} />,
@@ -40,7 +46,7 @@ export default function BoardEditPage() {
     }
   }, [user]);
 
-  const checkImg = (file) => {
+  const checkImg = (file: File) => {
     const validTypes = [
       "image/jpeg",
       "image/jpg",
@@ -56,7 +62,7 @@ export default function BoardEditPage() {
   };
 
   const editPost = useMutation({
-    mutationFn: async (item) => {
+    mutationFn: async (item: FormData) => {
       let imageUrl = null;
 
       // 이미지 변경을 진행했을 경우 처음 등록할 때와 같이 업로드를 진행한 후 body에 imgURL을 추가
@@ -84,7 +90,8 @@ export default function BoardEditPage() {
         } catch (error) {
           console.error(
             "Image upload failed:",
-            error.response?.data || error.message
+            (error as { response: { data: string } }).response?.data ||
+              (error as { message: string }).message
           );
           throw new Error("Image upload failed.");
         }
@@ -102,8 +109,8 @@ export default function BoardEditPage() {
       navigate(`/board/${_id}`, { replace: true });
     },
     onError: (err) => {
-      console.error(err);
-      toast.error(err);
+      console.error("에러", err);
+      toast.error(err.message);
     },
   });
 
@@ -114,7 +121,7 @@ export default function BoardEditPage() {
       </Helmet>
       <NewPost
         isBoard={true}
-        handleSubmit={handleSubmit(editPost.mutate)}
+        handleSubmit={handleSubmit((data) => editPost.mutate(data, undefined))}
         register={register}
         editInfo={data.content}
       />

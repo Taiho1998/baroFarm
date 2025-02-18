@@ -5,7 +5,7 @@ import CommentItem from "@pages/board/CommentItem";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useUserStore from "@zustand/useUserStore";
 import PropTypes from "prop-types";
-import { useForm } from "react-hook-form";
+import { FieldValues, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ReplyData } from "types";
@@ -17,7 +17,7 @@ Comment.propTypes = {
 export default function Comment({
   replies = [],
 }: {
-  replies: ReplyData | never[] | undefined;
+  replies: ReplyData[] | never[] | undefined;
 }) {
   const { _id } = useParams();
   const axios = useAxiosInstance();
@@ -31,7 +31,7 @@ export default function Comment({
   ));
 
   const addComment = useMutation({
-    mutationFn: async (item) => {
+    mutationFn: async (item: FieldValues) => {
       if (user) return axios.post(`/posts/${_id}/replies`, item);
       else throw Error();
     },
@@ -67,12 +67,11 @@ export default function Comment({
       </section>
       <form
         className="h-[65px] flex px-5 -mx-5 items-center"
-        onSubmit={handleSubmit(addComment.mutate)}
+        onSubmit={handleSubmit((data) => addComment.mutate(data, undefined))}
       >
         <input
           type="text"
           id="comment"
-          name="comment"
           className="text-sm border border-gray3 max-w-[285px] h-[30px] rounded-md px-[5px] mr-5 flex-grow placeholder:font-thin placeholder:text-gray4 outline-none focus:border-btn-primary"
           placeholder="댓글을 입력해주세요"
           {...register("content")}

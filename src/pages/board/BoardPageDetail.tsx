@@ -2,6 +2,7 @@ import createdTime from "@utils/createdTime.js";
 import PropTypes from "prop-types";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { BoardData } from "types";
 
 BoardPageDetail.propTypes = {
   item: PropTypes.shape({
@@ -17,7 +18,7 @@ BoardPageDetail.propTypes = {
   }),
 };
 
-export default function BoardPageDetail({ item }) {
+export default function BoardPageDetail({ item }: { item: BoardData }) {
   const containerRef = useRef(null);
   const [isOverflow, setIsOverflow] = useState(false);
   const checkOverflow = () => {
@@ -30,7 +31,7 @@ export default function BoardPageDetail({ item }) {
     checkOverflow();
   }, []);
 
-  const newDate = createdTime(item.createdAt);
+  const newDate = createdTime(new Date(item.createdAt));
   return (
     <div className="relative">
       <Link to={`/board/${item._id}`}>
@@ -58,7 +59,7 @@ export default function BoardPageDetail({ item }) {
             </span>
           </div>
           <div className="mx-[5px] mt-[30px]">
-            {item.content.split("<br/>").map((line, index) => (
+            {item.content.split("<br/>").map((line: string, index: number) => (
               <Fragment key={index}>
                 {line}
                 <br />

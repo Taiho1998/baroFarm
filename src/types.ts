@@ -71,7 +71,7 @@ export interface BoardData {
   updatedAt: string | Date;
   user: user;
   _id: number;
-  replies: ReplyData;
+  replies: ReplyData[];
 }
 
 export interface OrderData {
