@@ -2,7 +2,7 @@ import Button from "@components/Button";
 import ProductToBuy from "@components/ProductToBuy";
 import HeaderIcon from "@components/HeaderIcon";
 import clsx from "clsx";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useUserStore from "@zustand/useUserStore";
@@ -14,6 +14,7 @@ import DataErrorPage from "@pages/DataErrorPage";
 import usePayStore from "@zustand/usePayStore";
 import { Helmet } from "react-helmet-async";
 import { toast } from "react-toastify";
+import { PayData, ProductData, SetHeaderContents } from "types";
 
 export default function PaymentPage() {
   // 이전 페이지에서 넘어온 정보
@@ -27,15 +28,20 @@ export default function PaymentPage() {
   // 구매할 상품 목록 상태 관리
   const [paymentItems, setPaymentItems] = useState([]);
   // 헤더 상태 설정 함수
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   // 결제 버튼 보이기 상태
   const [showButton, setShowButton] = useState(false);
   // 배송 메모 관리
-  const [memo, setMemo] = useState({});
+  const [memo, setMemo] = useState<{ memo?: string; detail?: string }>({});
   // 현재 선택한 배송지 아이디
   const [addressId, setAddressId] = useState(0);
   // 현재 선택한 배송지
-  const [currentAddress, setCurrentAddress] = useState();
+  const [currentAddress, setCurrentAddress] = useState<{
+    userName?: string;
+    name?: string;
+    phone?: string;
+    value?: string;
+  }>({});
   // 로그인한 유저 정보 가져오기
   const { user } = useUserStore();
   // 결제에 필요한 정보 가져오기
@@ -61,9 +67,11 @@ export default function PaymentPage() {
 
   // 구매할 상품 컴포넌트 동적 렌더링
   useEffect(() => {
-    const itemsToBuy = selectedItems?.map((item) => (
-      <ProductToBuy key={item.product._id} {...item} />
-    ));
+    const itemsToBuy = selectedItems?.map(
+      (item: { product: ProductData; quantity: number }) => (
+        <ProductToBuy key={item.product._id} {...item} />
+      )
+    );
     setPaymentItems(itemsToBuy);
   }, []);
 
@@ -77,8 +85,8 @@ export default function PaymentPage() {
 
   // 로그인한 사용자 정보 조회
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["users", `${user._id}`],
-    queryFn: () => axios.get(`/users/${user._id}`),
+    queryKey: ["users", `${user?._id}`],
+    queryFn: () => axios.get(`/users/${user?._id}`),
     select: (res) => res.data.item,
     staleTime: 1000 * 10,
   });
@@ -96,7 +104,9 @@ export default function PaymentPage() {
       });
     } else {
       setCurrentAddress(
-        data?.extra?.addressBook?.find((item) => item.id === addressId)
+        data?.extra?.addressBook?.find(
+          (item: { id: number }) => item.id === addressId
+        )
       );
     }
   }, [data, addressId]);
@@ -139,7 +149,7 @@ export default function PaymentPage() {
 
   // 장바구니 아이템 삭제 함수
   const deleteItem = useMutation({
-    mutationFn: (itemIds) =>
+    mutationFn: (itemIds: number[]) =>
       axios.delete(`/carts`, {
         // delete method에서 data는 config 객체 안에 담아서 보내야 함.
         data: {
@@ -151,7 +161,11 @@ export default function PaymentPage() {
   });
 
   // 배송 메모 입력하기
-  const postMemo = (e) => {
+  const postMemo = (
+    e:
+      | React.ChangeEvent<HTMLSelectElement>
+      | React.ChangeEvent<HTMLInputElement>
+  ) => {
     setMemo((prevState) => {
       const newState = { ...prevState };
 
@@ -166,7 +180,7 @@ export default function PaymentPage() {
   // 물품 구매하기
   const queryClient = useQueryClient();
   const purchaseItem = useMutation({
-    mutationFn: ({ _id, quantity }) =>
+    mutationFn: ({ _id, quantity }: { _id: number; quantity: number }) =>
       axios.post("/orders", {
         products: [
           {
@@ -182,14 +196,22 @@ export default function PaymentPage() {
       // 구매 성공시
       // 장바구니에서 넘어온 상태라면 장바구니에서 구매한 아이템 삭제
       if (previousUrl.includes("/cart")) {
-        let purchasedItems = [];
+        let purchasedItems: number[] = [];
         // 구매 목록의 아이디를 배열에 담고
-        selectedItems.forEach((item) => purchasedItems.push(item._id));
+        selectedItems.forEach((item: ProductData) =>
+          purchasedItems.push(item._id)
+        );
         // 배열을 삭제 요청에 전달
         deleteItem.mutate(purchasedItems);
       }
-      const payData = { selectedItems, totalFees, memo, currentAddress };
+      const payData: PayData = {
+        selectedItems,
+        totalFees,
+        memo,
+        currentAddress,
+      };
       setPayData(payData);
+      console.log("payData", payData);
       setTimeout(() => navigate("/complete"), 500);
       // openModal(); // 모달창으로 안내
     },
@@ -201,11 +223,12 @@ export default function PaymentPage() {
   if (!data) return null;
 
   // 유저 정보에 있던 폰 번호를 폰 번호 형식으로 변경
-  const formatPhoneNumber = (number) => {
+  const formatPhoneNumber = (number: string) => {
     return number.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
   };
 
   console.log("현재주소", currentAddress);
+  console.log("pay", selectedItems);
 
   return (
     <>

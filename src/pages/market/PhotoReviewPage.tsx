@@ -5,9 +5,10 @@ import HeaderIcon from "@components/HeaderIcon";
 
 import productImage1 from "/images/Sample1.svg";
 import PhotoReviewItem from "@components/PhotoReviewItem";
+import { SetHeaderContents } from "types";
 
 export default function PhotoReviewPage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
 
   useEffect(() => {

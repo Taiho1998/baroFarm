@@ -8,12 +8,17 @@ import PropTypes from "prop-types";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ReplyData } from "types";
 
 Comment.propTypes = {
   replies: PropTypes.array,
 };
 
-export default function Comment({ replies = [] }) {
+export default function Comment({
+  replies = [],
+}: {
+  replies: ReplyData | never[] | undefined;
+}) {
   const { _id } = useParams();
   const axios = useAxiosInstance();
   const queryClient = useQueryClient();
