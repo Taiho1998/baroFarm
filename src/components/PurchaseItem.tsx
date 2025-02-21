@@ -2,6 +2,7 @@ import PhotoReviewItem from "@components/PhotoReviewItem";
 import { Link, useNavigate } from "react-router-dom";
 
 import PropTypes from "prop-types";
+import { ProductData } from "types";
 
 PurchaseItem.propTypes = {
   product: PropTypes.shape({
@@ -10,7 +11,15 @@ PurchaseItem.propTypes = {
   orderId: PropTypes.number.isRequired,
 };
 
-export default function PurchaseItem({ orderId, product, date }) {
+export default function PurchaseItem({
+  orderId,
+  product,
+  date,
+}: {
+  orderId: number;
+  product: ProductData;
+  date: string;
+}) {
   let isReviewed = false;
   const [year, month, day] = date.split(".");
   const arriveDate = `${month}/${day.split(" ")[0]}`;

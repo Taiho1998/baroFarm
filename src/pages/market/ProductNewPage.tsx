@@ -19,6 +19,7 @@ export default function ProductNewPage() {
     name: string;
     content: string;
     quantity: string;
+    price: number;
   };
 
   const {

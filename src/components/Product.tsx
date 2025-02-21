@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
 import { useLikeToggle } from "@hooks/useLikeToggle";
+import { ProductData } from "types";
 
 const likeIcon = {
   default: "/icons/icon_likeHeart_no.svg",
@@ -26,7 +27,7 @@ Product.propTypes = {
   price: PropTypes.number.isRequired,
 };
 
-export default function Product(product) {
+export default function Product(product: ProductData) {
   const navigate = useNavigate();
 
   const goDetailPage = () => {

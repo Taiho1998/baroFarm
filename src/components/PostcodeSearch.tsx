@@ -1,6 +1,8 @@
 import Button from "@components/Button";
 import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
+import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
+import { user } from "types";
 
 PostcodeSearch.propTypes = {
   isOpenIframe: PropTypes.bool.isRequired,
@@ -9,11 +11,22 @@ PostcodeSearch.propTypes = {
   errors: PropTypes.object,
 };
 
+interface FormData extends user {
+  value: string;
+  detailValue: string;
+  confirmPassword: string;
+}
+
 export default function PostcodeSearch({
   isOpenIframe,
   setIsOpenIframe,
   register,
   errors,
+}: {
+  isOpenIframe: boolean;
+  setIsOpenIframe: React.Dispatch<React.SetStateAction<boolean>>;
+  register: UseFormRegister<FormData> | UseFormRegister<FieldValues>;
+  errors: FieldErrors<FormData> | FieldErrors<FieldValues>;
 }) {
   // 주소 검색 iframe에 접근
   const iframeRef = useRef(null);

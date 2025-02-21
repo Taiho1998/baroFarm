@@ -1,15 +1,29 @@
 import Button from "@components/Button";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { BaseSyntheticEvent, useState } from "react";
+import { FieldErrors, UseFormRegister } from "react-hook-form";
+import { ProductData } from "types";
+
+type ProductNewForm = {
+  image?: File[];
+  category: string;
+  seasonStart: string;
+  seasonEnd: string;
+  sale: string;
+  name: string;
+  content: string;
+  quantity: string;
+  price: number;
+};
 
 ProductInfoForm.propTypes = {
   handlesubmit: PropTypes.func,
   register: PropTypes.func.isRequired,
-  errors: PropTypes.shape(),
+  errors: PropTypes.shape({}),
   price: PropTypes.any,
   setPrice: PropTypes.func,
   isEdit: PropTypes.bool,
-  editInfo: PropTypes.shape(),
+  editInfo: PropTypes.shape({}),
 };
 
 export default function ProductInfoForm({
@@ -20,6 +34,16 @@ export default function ProductInfoForm({
   setPrice,
   isEdit = false,
   editInfo,
+}: {
+  register: UseFormRegister<ProductNewForm>;
+  handlesubmit: (
+    e?: BaseSyntheticEvent<object, any, any> | undefined
+  ) => Promise<void>;
+  errors: FieldErrors<ProductNewForm>;
+  price: number;
+  setPrice: React.Dispatch<React.SetStateAction<number>>;
+  isEdit?: boolean;
+  editInfo?: ProductData;
 }) {
   const [tag, setTag] = useState(
     editInfo && editInfo.extra.category ? editInfo.extra.category : ""
@@ -28,8 +52,10 @@ export default function ProductInfoForm({
     editInfo && editInfo.extra.sale !== 0 ? true : false
   );
   // 숫자만 남기기
-  const handlePriceChange = (e) => {
-    setPrice(parseInt(e.target.value.replace(/[^0-9]/g, "")));
+  const handlePriceChange = (e: React.FormEvent<HTMLInputElement>) => {
+    setPrice(
+      parseInt((e.target as HTMLInputElement).value.replace(/[^0-9]/g, ""))
+    );
   };
 
   //price 값을 string값으로 변화
@@ -43,7 +69,6 @@ export default function ProductInfoForm({
   return (
     <form className="mx-5 py-5" onSubmit={handlesubmit}>
       <input
-        name="name"
         id="name"
         type="text"
         className="bg-gray2/20 w-full h-[50px] px-4 focus:outline-btn-primary rounded-md"
@@ -59,8 +84,6 @@ export default function ProductInfoForm({
 
       <select
         id="category"
-        name="category"
-        type="text"
         value={tag}
         className={`mt-[25px] text-center bg-gray2 rounded-lg py-1  pe-6 appearance-none focus:outline-none cursor-pointer
         bg-[url('/icons/icon_dropdown.svg')] bg-no-repeat bg-[center_right_0.5rem] w-1/2`}
@@ -90,14 +113,12 @@ export default function ProductInfoForm({
           <select
             className="text-center bg-gray2 rounded-lg py-1 pe-6 appearance-none focus:outline-none cursor-pointer
         bg-[url('/icons/icon_dropdown.svg')] bg-no-repeat bg-[center_right_0.5rem] w-1/3"
-            type="month"
             id="seasonStart"
-            name="seasonStart"
             {...register("seasonStart")}
             required
             defaultValue={
               editInfo && editInfo.extra.category === "fruit"
-                ? editInfo.extra.bestSeason[0]
+                ? editInfo.extra.bestSeason![0]
                 : ""
             }
           >
@@ -118,14 +139,12 @@ export default function ProductInfoForm({
           <select
             className=" text-center bg-gray2 rounded-lg py-1 pe-6 appearance-none focus:outline-none cursor-pointer
         bg-[url('/icons/icon_dropdown.svg')] bg-no-repeat bg-[center_right_0.5rem] w-1/3"
-            type="month"
             id="seasonEnd"
-            name="seasonEnd"
             {...register("seasonEnd")}
             required
             defaultValue={
               editInfo && editInfo.extra.category === "fruit"
-                ? editInfo.extra.bestSeason[1]
+                ? editInfo.extra.bestSeason![1]
                 : ""
             }
           >
@@ -145,7 +164,6 @@ export default function ProductInfoForm({
         </>
       )}
       <textarea
-        name="content"
         className="border-2 border-white w-full mt-[25px] h-[200px] p-3 bg-gray2/20 outline-none focus:border-btn-primary rounded-md"
         placeholder="상품 소개문을 입력해주세요."
         {...register("content", {
@@ -164,7 +182,6 @@ export default function ProductInfoForm({
           <div className="relative w-full mt-[10px]">
             <input
               type="text"
-              name="price"
               value={priceToString}
               className="bg-gray2/20 w-full h-[50px] pr-12 px-4 focus:text-right placeholder:text-left focus:outline-btn-primary rounded-md"
               placeholder="가격을 입력하세요"
@@ -189,7 +206,6 @@ export default function ProductInfoForm({
       <label className="font-bold block mt-[15px]">판매 희망 개수</label>
       <input
         type="number"
-        name="quantity"
         className="bg-gray2/20 w-full h-[50px] px-4 mt-[10px] focus:outline-btn-primary rounded-md"
         placeholder="판매 개수를 입력하세요"
         {...register("quantity", {
@@ -240,7 +256,6 @@ export default function ProductInfoForm({
           <div className="relative w-full">
             <input
               id="sale"
-              name="sale"
               type="text"
               className="bg-gray2/20 w-full h-[50px] pr-12  focus:text-right px-4 mt-[10px] focus:outline-btn-primary rounded-md"
               placeholder="1 ~ 99 까지의 할인율을 입력하세요"
@@ -274,7 +289,6 @@ export default function ProductInfoForm({
             accept="image/*"
             placeholder="이미지를 선택하세요"
             className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 mt-[10px] focus:outline-btn-primary mb-[25px]"
-            name="attach"
             {...register("image", {
               required: "이미지 파일을 선택해주세요.",
             })}
@@ -282,7 +296,7 @@ export default function ProductInfoForm({
           />
         </>
       )}
-      <Button height="45px" fontSize={24} type="submit" isBig={true}>
+      <Button type="submit" isBig={true}>
         등록
       </Button>
     </form>

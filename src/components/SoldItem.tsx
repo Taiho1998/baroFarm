@@ -1,12 +1,22 @@
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { ProductData } from "types";
 
 SoldItem.propTypes = {
-  item: PropTypes.shape().isRequired,
+  item: PropTypes.shape({
+    quantity: PropTypes.number,
+    buyQuantity: PropTypes.number,
+    mainImages: PropTypes.array,
+    _id: PropTypes.number,
+    name: PropTypes.string,
+    updatedAt: PropTypes.string,
+    extra: PropTypes.shape({
+      sale: PropTypes.number,
+    }),
+  }).isRequired,
 };
 
-export default function SoldItem({ item }) {
-  console.log(item, "데이터");
+export default function SoldItem({ item }: { item: ProductData }) {
   const productSelling = item.quantity - item.buyQuantity > 0 ? true : false;
   return (
     <section className="flex gap-5 py-3 items-center">

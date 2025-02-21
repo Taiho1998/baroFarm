@@ -1,5 +1,6 @@
 import PhotoReviewItem from "@components/PhotoReviewItem";
 import PropTypes from "prop-types";
+import { ReviewData } from "types";
 
 ReviewItem.propTypes = {
   reply: PropTypes.shape({
@@ -13,7 +14,13 @@ ReviewItem.propTypes = {
   productName: PropTypes.string.isRequired,
 };
 
-export default function ReviewItem({ reply, productName }) {
+export default function ReviewItem({
+  reply,
+  productName,
+}: {
+  reply: ReviewData;
+  productName: string;
+}) {
   const dateOnly = reply.createdAt.split(" ")[0];
 
   return (

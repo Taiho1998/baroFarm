@@ -26,6 +26,7 @@ export default function EditProduct() {
     seasonStart: string;
     seasonEnd: string;
     sale: string;
+    price: number;
   };
 
   useEffect(() => {
@@ -46,18 +47,19 @@ export default function EditProduct() {
     formState: { errors },
   } = useForm<productForm>();
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["products", id],
-    queryFn: () => axios.get(`/products/${id}`),
-    select: (res) => res.data.item,
-    staleTime: 1000 * 10,
-  });
+  const { data, isLoading }: { data?: ProductData; isLoading: boolean } =
+    useQuery({
+      queryKey: ["products", id],
+      queryFn: () => axios.get(`/products/${id}`),
+      select: (res) => res.data.item,
+      staleTime: 1000 * 10,
+    });
 
   const patchProduct = useMutation({
     mutationFn: async (item: productForm) => {
       const codes = await axios.get("/codes");
       const categoryList = codes.data.item.nested.productCategory.codes;
-      setPrice(data.price);
+      setPrice(data!.price);
       const category = categoryList.filter(
         (data: { code: string }) => data.code == item.category
       );

@@ -6,6 +6,7 @@ import Button from "@components/Button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxiosInstance from "@hooks/useAxiosInstance";
 import { toast } from "react-toastify";
+import { ProductData } from "types";
 
 const likeIcon = {
   default: "/icons/icon_likeHeart_no.svg",
@@ -30,7 +31,13 @@ ProductSmall.propTypes = {
   bookmarkId: PropTypes.number.isRequired,
 };
 
-export default function ProductSmall({ product, bookmarkId }) {
+export default function ProductSmall({
+  product,
+  bookmarkId,
+}: {
+  product: ProductData;
+  bookmarkId: number;
+}) {
   const navigate = useNavigate();
   const axios = useAxiosInstance();
 
@@ -53,7 +60,8 @@ export default function ProductSmall({ product, bookmarkId }) {
   const addCartItem = useMutation({
     mutationFn: () =>
       axios.post(`/carts`, {
-        product_id: parseInt(product._id),
+        product_id:
+          typeof product._id === "string" ? parseInt(product._id) : product._id,
         quantity: 1,
       }),
     onSuccess: () => {

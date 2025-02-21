@@ -60,6 +60,25 @@ export interface ProductData {
   updatedAt: string | Date;
   _id: number;
   content: string;
+  quantity: number;
+  review: ReviewProductData;
+  rating: number;
+}
+
+export interface ReviewProductData {
+  review: {
+    rating: number;
+    content: string;
+    extra: {
+      image: string;
+    };
+    user: {
+      _id: number;
+      name: string;
+      image: string;
+    };
+    createdAt: string;
+  };
 }
 
 export interface BoardData {
