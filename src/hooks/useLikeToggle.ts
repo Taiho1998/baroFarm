@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxiosInstance from "@hooks/useAxiosInstance";
+import { ProductData } from "types";
 
-export const useLikeToggle = (product) => {
+export const useLikeToggle = (product: ProductData) => {
   const [isLiked, setIsLiked] = useState(!!product?.myBookmarkId);
   const queryClient = useQueryClient();
   const instance = useAxiosInstance();
@@ -22,7 +23,9 @@ export const useLikeToggle = (product) => {
 
     onSuccess: () => {
       setIsLiked(true);
-      queryClient.invalidateQueries(["products"], product.extra.category);
+      queryClient.invalidateQueries({
+        queryKey: ["products", product.extra.category],
+      });
     },
     onError: (error) => {
       console.error("찜 추가 실패: ", error);
@@ -32,15 +35,19 @@ export const useLikeToggle = (product) => {
   const { mutate: removeLike } = useMutation({
     mutationFn: async () => {
       if (!product || !product.myBookmarkId) return;
-      const response = await instance.delete(`/bookmarks/${product.myBookmarkId}`);
+      const response = await instance.delete(
+        `/bookmarks/${product.myBookmarkId}`
+      );
       return response.data;
     },
     onSuccess: () => {
       setIsLiked(false);
-      queryClient.invalidateQueries(["products"], product.extra.category);
+      queryClient.invalidateQueries({
+        queryKey: ["products", product.extra.category],
+      });
     },
-    onError: () => {
-      console.error("좋아요 삭제 실패: ", error);
+    onError: (error) => {
+      console.error("좋아요 삭제 실패: ", error.message);
     },
   });
 

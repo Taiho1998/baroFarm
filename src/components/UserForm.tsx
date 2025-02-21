@@ -6,6 +6,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { user } from "types";
 
+interface FormData extends user {
+  value: string;
+  detailValue: string;
+  confirmPassword: string;
+}
+
 UserForm.propTypes = {
   // 수정기능 구현시 기존의 계정 정보를 입력받아올 props - userInfo
   // 회원가입 시에도 쓰이기에 userInfo는 isRequired가 아님
@@ -50,7 +56,7 @@ export default function UserForm({
     formState: { errors },
     setError, // register로 설정한 기본 유효성 검사 외에 추가적인 에러 처리가 필요할 때 사용(수동으로 에러 설정) => 서버에서 받은 에러 표시
     clearErrors, // 특정 필드나 모든 필드의 에러 상태를 제거
-  } = useForm({
+  } = useForm<FormData>({
     defaultValues: {
       // input의 defaultValue 속성 대신 useForm의 defaultValues 옵션으로 초기값 설정
       name: userInfo?.name || "",
@@ -59,6 +65,7 @@ export default function UserForm({
       //   userName: userInfo?.extra?.userName || "",
       // },
       type: userInfo?.type || "",
+      password: "",
       // 수정 데이터가 넘어올 때만 phone, address 항목 생성
       ...(userInfo && {
         phone: userInfo?.phone || "",
@@ -84,9 +91,9 @@ export default function UserForm({
         message: "이메일 형식으로 입력해 주세요.",
       },
       // onBlur: input 필드에서 포커스가 빠져나갈때(이메일 중복 체크)
-      onBlur: async (e) => {
+      onBlur: async (e: React.FormEvent<HTMLInputElement>) => {
         // console.log("onBlur 실행됨");
-        const email = e.target.value;
+        const email = (e.target as HTMLInputElement).value;
         // console.log("입력된 이메일:", email);
 
         // 이메일 형식이 올바른 경우에만 중복 체크(email 값이 존재 + 정규식 검사를 수행, 두 조건을 모두 확인)
@@ -134,7 +141,7 @@ export default function UserForm({
       required: "비밀번호를 확인해주세요.",
       // 기본 제공 되는 required,pattern 등으로는 처리할 수 없는 복잡한 유효성 검사를 할 때 사용(사용자 정의 유효성 검사 기능)
       validate: {
-        matchPassword: (value) =>
+        matchPassword: (value: string) =>
           value === watch("password") || "비밀번호가 일치하지 않습니다.",
       },
     },
@@ -147,13 +154,15 @@ export default function UserForm({
           message: "한글 또는 영문만 입력 가능합니다",
         },
       },
+      gender: undefined,
+      birth: undefined,
     },
     // 공통 필드(회원가입 및 프로필 수정 시 공통으로 사용)
     name: {
       required: "닉네임은 필수입니다.",
-      onBlur: async (e) => {
+      onBlur: async (e: React.FormEvent<HTMLInputElement>) => {
         // console.log("onBlur 실행됨");
-        const name = e.target.value;
+        const name = (e.target as HTMLInputElement).value;
         // console.log("입력된 닉네임:", name);
 
         if (name && !userInfo) {
@@ -196,9 +205,12 @@ export default function UserForm({
         value: /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/,
         message: "올바른 전화번호 형식이 아닙니다.",
       },
-      onChange: (e) => {
+      onChange: (e: React.FormEvent<HTMLInputElement>) => {
         // 숫자가 아닌 모든 문자 제거 (예: "010-1234-5678" → "01012345678")
-        const number = e.target.value.replace(/[^\d]/g, "");
+        const number = (e.target as HTMLInputElement).value.replace(
+          /[^\d]/g,
+          ""
+        );
 
         // 하이픈 추가 로직
         let formattedNumber = "";
@@ -214,21 +226,30 @@ export default function UserForm({
         }
 
         // 입력 값 업데이트
-        e.target.value = formattedNumber;
+        (e.target as HTMLInputElement).value = formattedNumber;
       },
     },
   };
 
   // FormData에서 confirmPassword는 비밀번호 확인용으로만 사용되고 서버에는 보낼 필요가 없어서 제외시키는 작업
   // handleSubmit이 수집한 데이터를 handleFormSubmit함수의 첫번째 인자로 전달
-  const handleFormSubmit = (formData) => {
+  const handleFormSubmit = (
+    formData: {
+      value: string;
+      detailValue: string;
+      confirmPassword: string;
+    } & user
+  ) => {
     // ...submitData는 confirmPassword를 제외한 나머지 모든 속성
     const { confirmPassword, ...submitData } = formData;
     onSubmitUser(submitData);
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="p-5">
+    <form
+      onSubmit={handleSubmit((data) => handleFormSubmit(data))}
+      className="p-5"
+    >
       {!userInfo && (
         <>
           {/* 이메일 */}

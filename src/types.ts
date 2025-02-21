@@ -39,6 +39,7 @@ type extra = {
   saledPrice: number;
   rating: number;
   image: mainImages;
+  category: string;
 };
 
 export interface ProductData {
