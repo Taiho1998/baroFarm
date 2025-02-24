@@ -4,7 +4,8 @@ import Spinner from "@components/Spinner";
 import useAxiosInstance from "@hooks/useAxiosInstance";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useUserStore from "@zustand/useUserStore";
-import { useEffect } from "react";
+import { AxiosError } from "axios";
+import { ChangeEvent, Fragment, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import {
   Link,
@@ -20,6 +21,8 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const axios = useAxiosInstance();
   const url: string = "https://11.fesp.shop";
+
+  const [errorMessage, setErrorMessage] = useState("");
 
   const queryClient = useQueryClient();
 
@@ -53,13 +56,13 @@ export default function ProfilePage() {
   };
 
   const addProfileImg = useMutation({
-    mutationFn: async (item) => {
+    mutationFn: async (item: { image: File[] }) => {
       let imageUrl = null;
 
       // 이미지 파일 확인 절차
       if (checkImg(item.image[0])) {
         throw new Error(
-          "유효하지 않은 파일입니다. 이미지 파일을 업로드 해주십시오.\n\n유효한 파일: jpeg, jpg, png, gif, webp, svm"
+          "유효하지 않은 파일입니다. 이미지 파일을 업로드 해주십시오.\n유효한 파일: jpeg, jpg, png, gif, webp, svm"
         );
       }
       // 이미지 첨부는 필수이므로 이미지 첨부가 되어있지 않다면 아예 생성되지 않음
@@ -73,11 +76,14 @@ export default function ProfilePage() {
             },
           });
           imageUrl = uploadImg.data.item[0].path; // 서버에서 반환된 이미지 URL
-        } catch (error) {
-          console.error(
-            "Image upload failed:",
-            error.response?.data || error.message
-          );
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            setErrorMessage(error.message);
+          } else if (error instanceof Object && "response" in error) {
+            const response = error.response as { data: string };
+            setErrorMessage(response.data);
+          }
+          console.error("Image upload failed:", errorMessage);
           throw new Error("Image upload failed.");
         }
         const body = {
@@ -94,14 +100,23 @@ export default function ProfilePage() {
       navigate("/users/login", { replace: true });
     },
     onError: (error) => {
-      toast.error(`에러: ${error.message}`);
+      error.message
+        .split("\n")
+        .map((line: string, index: number) =>
+          line == ""
+            ? null
+            : toast.error(index === 0 ? `에러: ${line}` : `${line}`)
+        );
     },
   });
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    addProfileImg.mutate({ image: [file] });
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files != undefined) {
+      const file = e.target.files[0];
+      addProfileImg.mutate({ image: [file] });
+    } else {
+      return;
+    }
   };
 
   const setProfileImg = async () => {

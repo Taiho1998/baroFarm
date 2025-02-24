@@ -14,17 +14,21 @@ import {
   useOutletContext,
   useSearchParams,
 } from "react-router-dom";
+import { BoardData, SetHeaderContents } from "types";
 
 export default function BoardPage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
   const { user } = useUserStore();
   const [isLogin, setIsLogin] = useState(true);
+  const [boardsLoading, setBoardsLoading] = useState(false);
   const axios = useAxiosInstance();
   const [searchParams, setSearchParams] = useSearchParams();
   const keyword = searchParams.get("keyword") || ""; // URL에서 keyword 가져오기
   const [page, setPage] = useState(1);
   const postsPerPage = 10;
+
+  //Intersection Observer 설정
 
   useEffect(() => {
     setHeaderContents({
@@ -45,22 +49,28 @@ export default function BoardPage() {
   }, []);
 
   // 사진을 포함한 게시글
-  const { data: communityBoard, isLoading } = useQuery({
+  const {
+    data: communityBoard,
+    isLoading,
+  }: { data?: BoardData; isLoading: boolean } = useQuery({
     queryKey: ["posts", "community", keyword],
     queryFn: () =>
       axios.get(`/posts`, {
-        params: { type: "community", keyword: keyword, limit: 10 },
+        params: { type: "community", keyword: keyword },
       }),
     select: (res) => res.data.item,
     staleTime: 1000 * 10,
   });
 
   // 사진을 포함하지 않은 게시글
-  const { data: noPicBoard, isLoading: isLoading2 } = useQuery({
+  const {
+    data: noPicBoard,
+    isLoading: isLoading2,
+  }: { data?: BoardData; isLoading: boolean } = useQuery({
     queryKey: ["posts", "noPic", keyword],
     queryFn: () =>
       axios.get(`/posts`, {
-        params: { type: "noPic", keyword: keyword, limit: 10 },
+        params: { type: "noPic", keyword: keyword },
       }),
     select: (res) => res.data.item,
     staleTime: 1000 * 10,
@@ -70,10 +80,15 @@ export default function BoardPage() {
     return <Spinner />;
   }
 
-  const mergeData = [...communityBoard, ...noPicBoard];
+  const mergeData: BoardData[] = [
+    ...(Array.isArray(communityBoard) ? communityBoard : []),
+    ...(Array.isArray(noPicBoard) ? noPicBoard : []),
+  ];
   const sortedData = mergeData.sort((prev, next) => next._id - prev._id);
 
-  const handleClick = async (event) => {
+  const handleClick = async (
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
     event.preventDefault();
     const isConfirmed = await ShowConfirmToast(
       "로그인 후 이용 가능합니다.\n로그인 페이지로 이동하시겠습니까?"
@@ -83,23 +98,22 @@ export default function BoardPage() {
     }
   };
 
-  const searchKeyword = (e) => {
+  const searchKeyword = (e: React.FormEvent<HTMLFormElement>) => {
     // 폼에서 name="keyword"인 입력값을 가져와 앞뒤 공백 제거
     e.preventDefault();
-    const searchWord = e.target.keyword.value.trim();
+    const searchWord = (e.target as HTMLFormElement).keyword.value.trim();
     setSearchParams({ keyword: searchWord }); // URL에 keyword 저장
   };
 
   // 페이지에 맞는 데이터 계산
   const indexOfLastPost = page * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = sortedData.slice(indexOfFirstPost, indexOfLastPost);
+  const currentPosts = sortedData.slice(0, indexOfLastPost);
 
   const totalPages = Math.ceil(sortedData.length / postsPerPage);
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = (newPage: number) => {
     setPage(newPage);
-    window.scrollTo({ top: 0 });
+    // window.scrollTo({ top: 0 });
   };
 
   const boards = currentPosts?.map((item) => (
@@ -172,7 +186,7 @@ export default function BoardPage() {
         )}
         <Link
           to={isLogin ? "new" : ""}
-          onClick={!isLogin ? (event) => handleClick(event) : null}
+          onClick={!isLogin ? (event) => handleClick(event) : undefined}
           className="fixed right-[calc(50%-155px)] bottom-[150px] w-[40px] h-[40px] rounded-full shadow-bottom"
         >
           <img src="/icons/icon_newpost.svg" className="w-full h-full" />
@@ -185,6 +199,7 @@ export default function BoardPage() {
           />
         </div>
       </div>
+      {boardsLoading && <p>로딩 중...</p>}
     </>
   );
 }

@@ -1,4 +1,4 @@
-export default function PhotoReviewItem({ image }) {
+export default function PhotoReviewItem({ image }: { image: string }) {
   return (
     <img
       src={`https://11.fesp.shop${image}`}

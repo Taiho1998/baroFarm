@@ -10,9 +10,10 @@ import Spinner from "@components/Spinner";
 import DataErrorPage from "@pages/DataErrorPage";
 
 import { Helmet } from "react-helmet-async";
+import { ReviewData, SetHeaderContents } from "types";
 
 export default function ReviewPage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
 
   const navigate = useNavigate();
   const { _id } = useParams();
@@ -21,7 +22,7 @@ export default function ReviewPage() {
 
   const [sortOrder, setSortOrder] = useState("best");
 
-  const handleSort = (order) => {
+  const handleSort = (order: string) => {
     setSortOrder(order);
   };
 
@@ -45,25 +46,29 @@ export default function ReviewPage() {
       );
       return response.data.item;
     },
-    enable: !!_id && !!sortOrder,
+    enabled: !!_id && !!sortOrder,
   });
 
   if (isLoading) return <Spinner />;
   if (isError) return <DataErrorPage />;
 
-  const ratings = reviewData.map((review) => review.rating);
+  const ratings = reviewData.map((review: ReviewData) => review.rating);
   const totalRating =
-    ratings.reduce((acc, curr) => acc + curr, 0) / ratings.length;
+    ratings.reduce((acc: number, curr: number) => acc + curr, 0) /
+    ratings.length;
 
   const sortedReviewData =
     sortOrder === "new"
       ? [...reviewData].sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          //TS에서는 new Date() - new Date는 오류를 발생 => number를 반환해야 하는데 date를 반환하기 떄문
+          //따라서 getTime()을 적용
         )
       : reviewData;
 
   const photoReviews = reviewData.filter(
-    (review) => review.extra && review.extra.image
+    (review: ReviewData) => review.extra && review.extra.image
   );
   return (
     <>
@@ -91,7 +96,7 @@ export default function ReviewPage() {
         </Link> */}
           </div>
           <div className="flex overflow-x-auto gap-3 pt-5 pb-5">
-            {photoReviews.map((review) => (
+            {photoReviews.map((review: ReviewData) => (
               <PhotoReviewItem key={review._id} image={review.extra.image} />
             ))}
           </div>
@@ -116,7 +121,7 @@ export default function ReviewPage() {
         >
           최신순
         </button>
-        {sortedReviewData.map((reply) => (
+        {sortedReviewData.map((reply: ReviewData) => (
           <ReviewItem
             key={reply._id}
             reply={reply}

@@ -5,17 +5,29 @@ import useAxiosInstance from "@hooks/useAxiosInstance";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ProductData, SetHeaderContents } from "types";
 
 export default function EditProduct() {
   const { id } = useParams();
-  const [price, setPrice] = useState<number>();
+  const [price, setPrice] = useState<number>(0);
   const axios = useAxiosInstance();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
+
+  type productForm = {
+    category: string;
+    name: string;
+    content: string;
+    quantity: string;
+    seasonStart: string;
+    seasonEnd: string;
+    sale: string;
+    price: number;
+  };
 
   useEffect(() => {
     setHeaderContents({
@@ -33,22 +45,23 @@ export default function EditProduct() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<productForm>();
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["products", id],
-    queryFn: () => axios.get(`/products/${id}`),
-    select: (res) => res.data.item,
-    staleTime: 1000 * 10,
-  });
+  const { data, isLoading }: { data?: ProductData; isLoading: boolean } =
+    useQuery({
+      queryKey: ["products", id],
+      queryFn: () => axios.get(`/products/${id}`),
+      select: (res) => res.data.item,
+      staleTime: 1000 * 10,
+    });
 
   const patchProduct = useMutation({
-    mutationFn: async (item) => {
+    mutationFn: async (item: productForm) => {
       const codes = await axios.get("/codes");
       const categoryList = codes.data.item.nested.productCategory.codes;
-      setPrice(data.price);
+      setPrice(data!.price);
       const category = categoryList.filter(
-        (data) => data.code == item.category
+        (data: { code: string }) => data.code == item.category
       );
       const body = {
         name: item.name,
@@ -80,8 +93,8 @@ export default function EditProduct() {
       navigate("/users/sale", { replace: true });
     },
     onError: (err) => {
-      console.err(err);
-      toast.error("에러 메시지: ", err);
+      console.error(err);
+      toast.error(`에러 메시지: ${err}`);
     },
   });
 
@@ -96,7 +109,9 @@ export default function EditProduct() {
       </Helmet>
       <ProductInfoForm
         register={register}
-        handlesubmit={handleSubmit(patchProduct.mutate)}
+        handlesubmit={handleSubmit((data) =>
+          patchProduct.mutate(data, undefined)
+        )}
         errors={errors}
         price={price}
         setPrice={setPrice}

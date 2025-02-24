@@ -8,10 +8,11 @@ import Products from "@components/Products";
 import Spinner from "@components/Spinner";
 import DataErrorPage from "@pages/DataErrorPage";
 import { Helmet } from "react-helmet-async";
+import { SetHeaderContents } from "types";
 
 export default function CategoryPage() {
   const { category } = useParams();
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
 
   const categoryTitle = [

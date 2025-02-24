@@ -5,10 +5,20 @@ import { useQuery } from "@tanstack/react-query";
 import useUserStore from "@zustand/useUserStore";
 import PropTypes from "prop-types";
 import { useState } from "react";
+import { FieldErrors, UseFormRegister } from "react-hook-form";
+import { BoardData } from "types";
 
 const starIcon = {
   active: "/icons/icon_star_full.svg",
   default: "/icons/icon_star_empty.svg",
+};
+
+type ReviewForm = {
+  order_id?: number;
+  product_id?: number;
+  rating: number;
+  content: string;
+  image: File[];
 };
 
 NewPost.propTypes = {
@@ -17,7 +27,7 @@ NewPost.propTypes = {
   register: PropTypes.func.isRequired,
   handleRating: PropTypes.func,
   editInfo: PropTypes.string,
-  errors: PropTypes.shape(),
+  errors: PropTypes.shape({}),
 };
 
 export default function NewPost({
@@ -27,6 +37,13 @@ export default function NewPost({
   handleRating,
   editInfo,
   errors = {},
+}: {
+  isBoard: boolean;
+  handleSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
+  register: UseFormRegister<ReviewForm>;
+  handleRating?: (rating: number) => void;
+  editInfo?: string;
+  errors?: FieldErrors<ReviewForm>;
 }) {
   const { user } = useUserStore();
   const axios = useAxiosInstance();
@@ -34,14 +51,16 @@ export default function NewPost({
   const [selectedStar, setSelectedStar] = useState(0);
   const [rating, setRating] = useState(0);
 
-  const handleClick = (index) => {
+  const handleClick = (index: number) => {
     setSelectedStar(index);
     setRating(index);
-    handleRating(index);
+    if (handleRating) {
+      handleRating(index);
+    }
   };
   const { data, isLoading, isError } = useQuery({
     queryKey: ["user", user?._id],
-    queryFn: () => axios.get(`/users/${user._id}`),
+    queryFn: () => axios.get(`/users/${user?._id}`),
     select: (res) => res.data.item,
     staleTime: 1000 * 10,
     enabled: !!user,
@@ -69,17 +88,16 @@ export default function NewPost({
 
       <form onSubmit={handleSubmit}>
         <textarea
-          name="content"
           id="content"
           wrap="hard"
-          cols="20"
-          rows="50"
+          cols={20}
+          rows={50}
           className="w-full mt-[10px] mb-[25px] h-[200px] p-3 border-gray3 border-[1px] bg-gray2/20 focus:outline-btn-primary rounded-md"
           placeholder="본문 내용을 입력해주세요."
           {...register("content", {
             required: "본문 내용을 입력해주세요",
           })}
-          defaultValue={editInfo ? editInfo.replaceAll("<br/>", "\n") : null}
+          defaultValue={editInfo ? editInfo.replaceAll("<br/>", "\n") : ""}
         ></textarea>
         {errors.content && (
           <p className="text-red1 text-xs -mt-7 ps-1">
@@ -114,7 +132,6 @@ export default function NewPost({
           accept="image/*"
           placeholder="이미지를 선택하세요"
           className="w-full px-3 py-2 border rounded-lg mt-[10px] mb-[25px]"
-          name="attach"
           {...register("image")}
         />
         <button className="w-full bg-btn-primary p-3 rounded-lg text-white text-lg ">

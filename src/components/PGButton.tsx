@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { MouseEventHandler } from "react";
 
 PGButton.propTypes = {
   imgPath: PropTypes.string.isRequired,
@@ -6,7 +7,15 @@ PGButton.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
 
-export default function PGButton({ imgPath, children, onClick }) {
+export default function PGButton({
+  imgPath,
+  children,
+  onClick,
+}: {
+  imgPath: string;
+  children: string;
+  onClick: MouseEventHandler<HTMLButtonElement>;
+}) {
   return (
     <button className="flex flex-col items-center gap-2" onClick={onClick}>
       <img

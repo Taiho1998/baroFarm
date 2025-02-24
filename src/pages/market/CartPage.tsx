@@ -15,10 +15,10 @@ import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { toast } from "react-toastify";
+import { CartData, ProductData, SetHeaderContents } from "types";
 
 export default function CartPage() {
   const axios = useAxiosInstance();
-  const { user } = useUserStore();
   // 구매할 물품 선택을 위한 폼
   const { register, handleSubmit } = useForm();
   // 결제 버튼 보이기 상태
@@ -28,7 +28,9 @@ export default function CartPage() {
   const [discount, setDiscount] = useState(0);
   const [totalPayFees, setTotalPayFees] = useState(0);
   // 체크된 상품의 아이디를 담은 배열 상태 관리
-  const [checkedItemsIds, setCheckedItemsIds] = useState([]);
+  const [checkedItemsIds, setCheckedItemsIds] = useState<number[] | undefined>(
+    []
+  );
   // 보여줄 상품의 타입을 상태 관리
   const [renderCart, setRenderCart] = useState(true);
 
@@ -36,7 +38,7 @@ export default function CartPage() {
   const targetRef = useRef(null);
 
   // 헤더 상태 설정 함수
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
 
   // 헤더 상태 설정
@@ -48,7 +50,11 @@ export default function CartPage() {
   }, []);
 
   // 장바구니 목록 조회
-  const { data, isLoading, isError } = useQuery({
+  const {
+    data,
+    isLoading,
+    isError,
+  }: { data?: CartData; isLoading: boolean; isError: boolean } = useQuery({
     queryKey: ["carts"],
     queryFn: () => axios.get("/carts"),
     select: (res) => res.data,
@@ -94,7 +100,7 @@ export default function CartPage() {
   // 장바구니 상품 삭제
   const queryClient = useQueryClient();
   const deleteItem = useMutation({
-    mutationFn: async (_id) => {
+    mutationFn: async (_id: number) => {
       const ok = await ShowConfirmToast("상품을 삭제하시겠습니까?");
       if (ok) {
         axios.delete(`/carts/${_id}`);
@@ -110,7 +116,7 @@ export default function CartPage() {
 
   // 장바구니 수량 변경
   const updateItem = useMutation({
-    mutationFn: ({ _id, quantity }) =>
+    mutationFn: ({ _id, quantity }: { _id: number; quantity: number }) =>
       // _id는 장바구니 _id다 (상품의 _id는 product_id)
       axios.patch(`/carts/${_id}`, {
         // 보낼 데이터
@@ -132,11 +138,11 @@ export default function CartPage() {
 
   // 전체 선택 핸들러
   // 전체 선택 체크박스의 체크 상태를 인수로 받는다.
-  const toggleCheckAll = (isChecked) => {
+  const toggleCheckAll = (isChecked: boolean) => {
     // 전체 선택 체크박스가 체크되었을 때
     if (isChecked) {
       // 장바구니에 담긴 모든 아이템의 아이디를 checkedItemsIds 배열에 담음
-      const allProductsIds = data.item.map((item) => item._id);
+      const allProductsIds = data?.item?.map((item) => item._id);
       setCheckedItemsIds(allProductsIds);
     } else {
       // 체크 해제되었으면 checkedItemsIds 배열을 빈 배열로 설정
@@ -145,25 +151,25 @@ export default function CartPage() {
   };
 
   // 장바구니 개별 아이템 체크 핸들러
-  const toggleCartItemCheck = (targetId) => {
+  const toggleCartItemCheck = (targetId: number) => {
     // 체크한 상품을 장바구니 데이터에서 찾음
-    const cartItem = data.item.find((item) => item._id === targetId);
+    const cartItem = data?.item?.find((item) => item._id === targetId);
 
     // 체크한 상품의 product_id를 checkedCartItems 상태에 추가/제거
-    setCheckedItemsIds((prevCheckedIds) => {
-      const isAlreadyChecked = prevCheckedIds.includes(cartItem._id);
+    setCheckedItemsIds((prevCheckedIds?: number[]) => {
+      const isAlreadyChecked = prevCheckedIds?.includes(cartItem!._id);
 
       if (isAlreadyChecked) {
-        return prevCheckedIds.filter((id) => id !== cartItem._id);
+        return prevCheckedIds?.filter((id) => id !== cartItem!._id);
       }
-      return [...prevCheckedIds, cartItem._id];
+      return [...(prevCheckedIds as []), cartItem!._id];
     });
   };
 
   // 장바구니 아이템 여러건 삭제
   const deleteItems = useMutation({
     mutationFn: async () => {
-      if (checkedItemsIds.length !== 0) {
+      if (checkedItemsIds?.length !== 0) {
         const ok = await ShowConfirmToast("선택하신 상품을 삭제할까요?");
         if (ok) {
           setCheckedItemsIds([]);
@@ -186,28 +192,28 @@ export default function CartPage() {
   // 선택한 아이템, 데이터가 변경될 때 상품 금액, 할인 금액 다시 계산
   useEffect(() => {
     // 체크한 상품이 없다면 총금액, 할인금액을 0으로 설정하고 빠져나감
-    if (checkedItemsIds.length === 0) {
+    if (checkedItemsIds?.length === 0) {
       setTotalFees(0);
       setDiscount(0);
       return;
     }
 
-    const { subtotal, totalDiscount } = checkedItemsIds.reduce(
+    const { subtotal, totalDiscount } = checkedItemsIds!.reduce(
       (acc, checkedId) => {
         // 장바구니에서 아이템 찾기
-        const currentCartItem = data.item.find(
+        const currentCartItem = data?.item?.find(
           (item) => item._id === checkedId
         );
 
         // 해당 아이템의 총 합산 금액 구하기
         const itemTotal =
-          currentCartItem?.quantity * currentCartItem?.product.price;
+          currentCartItem?.quantity! * currentCartItem?.product.price!;
 
         // 해당 아이템의 할인 금액 구하기
         const itemDiscount =
-          currentCartItem?.quantity *
-          (currentCartItem?.product.price -
-            currentCartItem?.product.extra.saledPrice);
+          currentCartItem?.quantity! *
+          (currentCartItem?.product.price! -
+            currentCartItem?.product.extra.saledPrice!);
 
         return {
           subtotal: acc.subtotal + itemTotal, // 상품 금액 합계
@@ -236,7 +242,7 @@ export default function CartPage() {
   const totalShippingFees = totalFees > 30000 || totalFees === 0 ? 0 : 2500;
 
   // 장바구니 아이템으로 화면 렌더링
-  const itemList = data.item.map((item) => (
+  const itemList = data?.item.map((item) => (
     <CartItem
       key={item._id}
       {...item}
@@ -244,26 +250,32 @@ export default function CartPage() {
       deleteItem={deleteItem}
       updateItem={updateItem}
       toggleCartItemCheck={toggleCartItemCheck}
-      isChecked={checkedItemsIds.includes(item._id)}
+      isChecked={checkedItemsIds?.includes(item._id)}
     />
   ));
 
   // 찜한 상품으로 화면 렌더링
-  const likeItems = likeItem?.map((item) => (
-    <ProductSmall key={item._id} product={item.product} bookmarkId={item._id} />
-  ));
+  const likeItems = likeItem?.map(
+    (item: { _id: number; product: ProductData }) => (
+      <ProductSmall
+        key={item._id}
+        product={item.product}
+        bookmarkId={item._id}
+      />
+    )
+  );
 
   // 체크한 아이템의 데이터가 담긴 배열을 구매 페이지로 전송
   const selectItem = () => {
-    if (checkedItemsIds.length === 0) {
+    if (checkedItemsIds?.length === 0) {
       toast.warning("구매할 물품을 선택하세요");
       return;
     }
 
     // 결제 페이지로 체크한 상품의 데이터 넘기기
-    const selectedItems = checkedItemsIds.map((_id) =>
+    const selectedItems = checkedItemsIds?.map((_id) =>
       // 각각의 id 마다 checkedItemsIds에 담긴 id와 같은 상품을 장바구니에서 찾아서 리턴
-      data.item.find((item) => item._id === _id)
+      data?.item.find((item) => item._id === _id)
     );
     const currentUrl = window.location.href;
 
@@ -293,7 +305,7 @@ export default function CartPage() {
             }`}
             onClick={() => setRenderCart(true)}
           >
-            담은 상품({itemList.length})
+            담은 상품({itemList?.length})
           </div>
           <div
             className={`${
@@ -308,7 +320,7 @@ export default function CartPage() {
           {/* 장바구니 상품 혹은 찜한 상품 조건부 렌더링 */}
           {renderCart ? (
             <div>
-              {itemList.length > 0 ? (
+              {itemList?.length! > 0 ? (
                 <>
                   <section className="py-[14px] px-5 flex gap-[6px] items-center border-b border-gray2">
                     <label
@@ -318,10 +330,12 @@ export default function CartPage() {
                       <Checkbox
                         id="checkAll"
                         name="checkAll"
-                        checked={checkedItemsIds.length === data.item.length}
-                        onChange={(e) => toggleCheckAll(e.target.checked)}
+                        checked={checkedItemsIds?.length === data?.item.length}
+                        onChange={(e: { target: { checked: boolean } }) =>
+                          toggleCheckAll(e.target.checked)
+                        }
                       />
-                      전체 선택 ({checkedItemsIds.length}/{itemList?.length})
+                      전체 선택 ({checkedItemsIds?.length}/{itemList?.length})
                     </label>
                     <Button onClick={() => deleteItems.mutate()}>삭제</Button>
                   </section>

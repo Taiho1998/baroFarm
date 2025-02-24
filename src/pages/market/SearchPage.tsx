@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { toast } from "react-toastify";
+import { SetHeaderContents } from "types";
 
 export default function SearchPage() {
   // 최근 검색어 상태 관리
@@ -13,7 +14,7 @@ export default function SearchPage() {
     return JSON.parse(localStorage.getItem("recentKeywords") || "[]");
   });
 
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,11 +25,11 @@ export default function SearchPage() {
   }, []);
 
   // 검색어 저장하는 함수
-  const saveKeyword = (newKeyword) => {
+  const saveKeyword = (newKeyword: string) => {
     // 이미 존재하는 검색어인지 확인(중복 방지)
     if (!recentKeywords.includes(newKeyword)) {
       // 새로운(최근) 검색어를 배열 앞에 추가
-      const updatedKeywords = [newKeyword, ...recentKeywords];
+      const updatedKeywords: string[] = [newKeyword, ...recentKeywords];
       // 최대 개수 10개로 제한
       const limitedKeywords = limitKeywords(updatedKeywords);
       // localStorage 업데이트
@@ -39,7 +40,7 @@ export default function SearchPage() {
   };
 
   // 검색어 10개로 제한하는 함수
-  const limitKeywords = (keywords) => {
+  const limitKeywords = (keywords: string[]) => {
     // 10개 초과시 가장 오래된 검색어 제거
     if (keywords.length > 10) {
       return keywords.slice(0, 10); // 배열이 10개 초과일 때: 앞에서부터 10개만 잘라서 반환
@@ -48,10 +49,10 @@ export default function SearchPage() {
   };
 
   // 검색어 개별 삭제하는 함수
-  const removeKeyword = (keywordToRemove) => {
+  const removeKeyword = (keywordToRemove: string) => {
     // filter로 선택된 검색어만 제외하고 새 배열 생성
     const filteredKeywords = recentKeywords.filter(
-      (keyword) => keyword !== keywordToRemove
+      (keyword: string) => keyword !== keywordToRemove
     );
     // localStorage 업데이트
     localStorage.setItem("recentKeywords", JSON.stringify(filteredKeywords));
@@ -66,10 +67,10 @@ export default function SearchPage() {
   };
 
   // 검색어 제출 처리 함수
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // 폼에서 name="keyword"인 입력값을 가져와 앞뒤 공백 제거
-    const keyword = e.target.keyword.value.trim();
+    const keyword = (e.target as HTMLFormElement).keyword.value.trim();
 
     // 검색어가 없는 경우 경고 메시지 출력 후 종료
     if (!keyword) {
@@ -128,7 +129,7 @@ export default function SearchPage() {
         </div>
 
         <ul className="mt-2.5 flex items-center flex-wrap gap-2.5 text-sm">
-          {recentKeywords.map((keyword) => (
+          {recentKeywords.map((keyword: string) => (
             <RecentKeywordItem
               key={keyword}
               keyword={keyword}

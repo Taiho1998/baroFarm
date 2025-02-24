@@ -7,11 +7,21 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { toast } from "react-toastify";
+import { ReviewData, SetHeaderContents } from "types";
 
 export default function ProductNewReviewPage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
-  const { register, handleSubmit } = useForm();
+
+  type ReviewForm = {
+    order_id?: number;
+    product_id?: number;
+    rating: number;
+    content: string;
+    image: File[];
+  };
+
+  const { register, handleSubmit } = useForm<ReviewForm>();
 
   const queryClient = useQueryClient();
   const axios = useAxiosInstance();
@@ -31,12 +41,18 @@ export default function ProductNewReviewPage() {
   }, []);
 
   const [rating, setRating] = useState(0);
-  const handleRating = (rating) => {
+  const handleRating = (rating: number) => {
     setRating(rating);
   };
 
   const addReview = useMutation({
-    mutationFn: async (item) => {
+    mutationFn: async (item: {
+      order_id?: number;
+      product_id?: number;
+      rating: number;
+      content: string;
+      image: File[];
+    }) => {
       let imageUrl = null;
 
       if (item.image && item.image[0]) {
@@ -51,8 +67,8 @@ export default function ProductNewReviewPage() {
         imageUrl = uploadImg.data.item[0].path; // 서버에서 반환된 이미지 URL
       }
       const body = {
-        order_id: parseInt(order_id),
-        product_id: parseInt(_id),
+        order_id: typeof order_id === "string" ? parseInt(order_id) : null,
+        product_id: typeof _id === "string" ? parseInt(_id) : null,
         rating: rating,
         content: item.content,
         extra: {
@@ -79,10 +95,10 @@ export default function ProductNewReviewPage() {
       </Helmet>
       <NewPost
         isBoard={false}
-        handleSubmit={handleSubmit(addReview.mutate)}
+        handleSubmit={handleSubmit((data) => addReview.mutate(data, undefined))}
         register={register}
         handleRating={handleRating}
-      ></NewPost>
+      />
     </>
   );
 }

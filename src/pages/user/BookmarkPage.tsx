@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import useAxiosInstance from "@hooks/useAxiosInstance";
 
 import HeaderIcon from "@components/HeaderIcon";
@@ -8,9 +8,10 @@ import Products from "@components/Products";
 import Spinner from "@components/Spinner";
 import { Helmet } from "react-helmet-async";
 import DataErrorPage from "@pages/DataErrorPage";
+import { ProductData, SetHeaderContents } from "types";
 
 export default function BookmarkPage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
 
   const instance = useAxiosInstance();
@@ -41,8 +42,10 @@ export default function BookmarkPage() {
   if (isLoading) return <Spinner />;
   if (isError) return <DataErrorPage />;
 
+  console.log("찜", likeItem);
+
   const likeProducts = !!likeItem
-    ? Object.values(likeItem).filter(
+    ? Object.values(likeItem as { item: ProductData }).filter(
         (item) => item && item.myBookmarkId !== undefined
       )
     : [];

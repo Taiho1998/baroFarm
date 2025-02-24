@@ -6,9 +6,10 @@ import Spinner from "@components/Spinner";
 import DataErrorPage from "@pages/DataErrorPage";
 import useAxiosInstance from "@hooks/useAxiosInstance";
 import { useQuery } from "@tanstack/react-query";
+import { ProductData, SetHeaderContents } from "types";
 
 export default function SearchSeasonalPage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,7 +36,7 @@ export default function SearchSeasonalPage() {
   const currentMonth = new Date().getMonth() + 1;
 
   // 제철 상품 렌더링
-  const filteredOnMonthData = data.filter((item) =>
+  const filteredOnMonthData = data.filter((item: ProductData) =>
     item.extra.bestMonth?.includes(currentMonth)
   );
 

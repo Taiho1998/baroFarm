@@ -1,15 +1,18 @@
-import { forwardRef, useImperativeHandle, useRef } from "react";
+import { forwardRef, ReactNode, useImperativeHandle, useRef } from "react";
 import { createPortal } from "react-dom";
 
 import closeIcon from "/icons/icon_x_black.svg";
 
-const Modal = forwardRef(({ children }, ref) => {
-  const dialogRef = useRef();
+const Modal = forwardRef(({ children }: { children: ReactNode }, ref) => {
+  const dialogRef = useRef<HTMLDialogElement | null>(null);
 
   useImperativeHandle(ref, () => ({
-    open: () => dialogRef.current.showModal(),
-    close: () => dialogRef.current.close(),
+    open: () => dialogRef.current?.showModal(),
+    close: () => dialogRef.current?.close(),
   }));
+
+  const modalRoot = document.getElementById("modal-root");
+  if (!modalRoot) return null;
 
   return createPortal(
     <dialog
@@ -25,7 +28,7 @@ const Modal = forwardRef(({ children }, ref) => {
         {children}
       </div>
     </dialog>,
-    document.getElementById("modal-root")
+    modalRoot
   );
 });
 

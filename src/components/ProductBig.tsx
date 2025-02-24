@@ -2,6 +2,7 @@ import { useLikeToggle } from "@hooks/useLikeToggle";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { ProductData } from "types";
 
 const likeIcon = {
   default: "/icons/icon_likeHeart_no.svg",
@@ -27,7 +28,7 @@ ProductBig.propTypes = {
   replies: PropTypes.number.isRequired, // 댓글 배열
 };
 
-export default function ProductBig(product) {
+export default function ProductBig(product: ProductData) {
   const navigate = useNavigate();
 
   const goDetailPage = () => {

@@ -23,6 +23,7 @@ import HeaderIcon from "@components/HeaderIcon";
 import DataErrorPage from "@pages/DataErrorPage";
 import { Helmet } from "react-helmet-async";
 import ShowConfirmToast from "@components/ShowConfirmToast";
+import { ProductData, ReviewData, SetHeaderContents } from "types";
 
 const likeIcon = {
   default: "/icons/icon_likeHeart_no.svg",
@@ -32,7 +33,7 @@ const likeIcon = {
 export default function ProductDetailPage() {
   const { _id } = useParams();
 
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
 
   const instance = useAxiosInstance();
@@ -61,7 +62,9 @@ export default function ProductDetailPage() {
   });
 
   if (!!product) {
-    let productData = JSON.parse(sessionStorage.getItem("productData"));
+    let productData = JSON.parse(
+      sessionStorage.getItem("productData") as string
+    );
 
     // 맨 처음 값 초기화
     if (!Array.isArray(productData)) {
@@ -70,7 +73,7 @@ export default function ProductDetailPage() {
 
     // 중복된 객체를 제거
     productData = productData.filter(
-      (item) => item && item._id !== product._id
+      (item: ProductData) => item && item._id !== product._id
     );
 
     // 새로운 상품 추가
@@ -102,21 +105,22 @@ export default function ProductDetailPage() {
     window.scrollTo(0, 0);
   }, [product, categoryTitle]);
 
-  const purchaseModalRef = useRef();
-  const modalRef = useRef();
+  const purchaseModalRef = useRef<{ open: () => void; close: () => void }>();
+  const modalRef = useRef<{ open: () => void; close: () => void }>();
 
   const openPurchaseModal = () => {
-    purchaseModalRef.current.open();
+    purchaseModalRef.current?.open();
   };
 
   const openModal = () => {
-    modalRef.current.open();
-    purchaseModalRef.current.close();
+    modalRef.current?.open();
+    purchaseModalRef.current?.close();
   };
 
   const [count, setCount] = useState(1);
   // 이 아이템을 결제 페이지로 보낼때 재구조화하기 위해 상태관리
-  const [purchaseItem, setPurchaseItem] = useState();
+  const [purchaseItem, setPurchaseItem] =
+    useState<{ product: any; quantity: number }[]>();
   // (1) 아이템 불러와졌을 때, (2) count가 바뀔 때 purchaseItem 상태 업데이트
   useEffect(() => {
     setPurchaseItem([
@@ -130,7 +134,7 @@ export default function ProductDetailPage() {
     ]);
   }, [product, count]);
 
-  const handleCount = (sign) => {
+  const handleCount = (sign: string) => {
     if (sign === "plus") setCount((count) => count + 1);
     else if (sign === "minus" && count > 1) setCount((count) => count - 1);
   };
@@ -138,14 +142,14 @@ export default function ProductDetailPage() {
   const cartItem = useMutation({
     mutationFn: async () => {
       const response = await instance.post(`/carts`, {
-        product_id: parseInt(_id),
-        quantity: parseInt(count),
+        product_id: _id !== undefined ? parseInt(_id) : undefined,
+        quantity: typeof count !== "number" ? parseInt(count) : count,
       });
       return response.data.item;
     },
     onSuccess: () => {
       openModal();
-      queryClient.invalidateQueries(["cart"]);
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: (error) => {
       console.error("Error adding to cart", error);
@@ -217,7 +221,7 @@ export default function ProductDetailPage() {
           ) : undefined}
         </div>
         <div className="flex overflow-x-auto gap-3 scrollbar-hide">
-          {product.replies.map((reply) => (
+          {product.replies.map((reply: ReviewData) => (
             <ReviewBox
               key={reply._id}
               option={product.name}

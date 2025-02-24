@@ -1,6 +1,10 @@
 // React와 라우터 관련
 import { useEffect } from "react";
-import { useNavigate, useOutletContext, useSearchParams } from "react-router-dom";
+import {
+  useNavigate,
+  useOutletContext,
+  useSearchParams,
+} from "react-router-dom";
 
 // 컴포넌트
 import HeaderIcon from "@components/HeaderIcon";
@@ -10,6 +14,7 @@ import Products from "@components/Products";
 import Spinner from "@components/Spinner";
 import DataErrorPage from "@pages/DataErrorPage";
 import { Helmet } from "react-helmet-async";
+import { SetHeaderContents } from "types";
 
 export default function SearchResultsPage() {
   // URL의 쿼리 파라미터를 가져오기
@@ -21,7 +26,7 @@ export default function SearchResultsPage() {
   const sort = searchParams.get("sort") || '{"createdAt":-1}';
   const axios = useAxiosInstance();
 
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,7 +42,7 @@ export default function SearchResultsPage() {
   }, []);
 
   // 정렬 기준 변경 핸들러
-  const handleSortChange = (sortValue) => {
+  const handleSortChange = (sortValue: string) => {
     // 현재 URL의 모든 쿼리 파라미터를 복사 (예: ?keyword=귤&sort={"createdAt":-1})
     const newSearchParams = new URLSearchParams(searchParams);
     // 복사된 쿼리 파라미터에서 sort 값을 선택된 새로운 정렬 기준으로 변경 (예: sort={"extra.saledPrice":-1})
@@ -102,7 +107,11 @@ export default function SearchResultsPage() {
         {/* 검색 결과 없을 때와 있을 때의 조건부 렌더링 */}
         {data.length === 0 ? (
           <div className="p-5 text-sm text-center font-medium mt-3">
-            <img className="block m-auto mb-2" src="/icons/icon_sad.svg" alt="검색 결과 없음을 나타내는 슬픈 표정" />
+            <img
+              className="block m-auto mb-2"
+              src="/icons/icon_sad.svg"
+              alt="검색 결과 없음을 나타내는 슬픈 표정"
+            />
             <p>입력하신 검색어의 결과를 찾을 수 없습니다.</p>
             <p>다른 검색어로 시도하시거나 맞춤법을 확인해주세요.</p>
           </div>

@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import ShowConfirmToast from "@components/ShowConfirmToast";
+import { ReplyData } from "types";
 
 CommentItem.propTypes = {
   item: PropTypes.shape({
@@ -20,7 +21,7 @@ CommentItem.propTypes = {
   }),
 };
 
-export default function CommentItem({ item }) {
+export default function CommentItem({ item }: { item: ReplyData }) {
   const { user } = useUserStore();
   const axios = useAxiosInstance();
   const { _id } = useParams();
@@ -37,7 +38,7 @@ export default function CommentItem({ item }) {
     }
   };
 
-  const newDate = createdTime(item.createdAt);
+  const newDate = createdTime(new Date(item.createdAt));
   return (
     <>
       <div className="flex flex-row mt-5 px-[15px] items-center">

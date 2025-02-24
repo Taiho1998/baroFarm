@@ -6,10 +6,19 @@ RecentKeywordItem.propTypes = {
   onRemove: PropTypes.func.isRequired,
 };
 
-export default function RecentKeywordItem({ keyword, onRemove }) {
+export default function RecentKeywordItem({
+  keyword,
+  onRemove,
+}: {
+  keyword: string;
+  onRemove: (keywordToRemove: string) => void;
+}) {
   return (
     <li className="rounded-full border border-btn-primary text-btn-primary flex items-center gap-1 px-2">
-      <Link to={`/search/results?keyword=${keyword}`} className="hover:font-bold">
+      <Link
+        to={`/search/results?keyword=${keyword}`}
+        className="hover:font-bold"
+      >
         {keyword}
       </Link>
       <button aria-label="검색어 삭제" onClick={() => onRemove(keyword)}>

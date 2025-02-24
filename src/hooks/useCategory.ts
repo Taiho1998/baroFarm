@@ -1,10 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import useAxiosInstance from "@hooks/useAxiosInstance";
+import { ProductData } from "types";
 
-export const useCategory = (product) => {
+export const useCategory = (product: ProductData) => {
   const instance = useAxiosInstance();
 
-  const { data: categoryData } = useQuery({
+  const {
+    data: categoryData,
+  }: {
+    data?: { productCategory?: { codes: { code: string; value: string }[] } };
+  } = useQuery({
     queryKey: ["category"],
     queryFn: async () => {
       const response = await instance.get(`/codes/productCategory`);

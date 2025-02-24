@@ -1,3 +1,5 @@
+import { Product } from "@portone/browser-sdk/dist/v2/entity";
+
 export type user = {
   _id: number;
   name: string;
@@ -8,14 +10,21 @@ export type user = {
   type?: string;
   phone?: string;
   address?: string;
-  extra: UserExtra;
-  password: string;
+  extra?: UserExtra;
+  password?: string;
 };
 
 type UserExtra = {
   birth?: string;
   gender?: string;
   userName?: string;
+  addressBook: {
+    id?: number;
+    userName: string;
+    name: string;
+    phone: string;
+    value: string;
+  }[];
 };
 
 export interface UserStore {
@@ -36,16 +45,20 @@ type extra = {
   sale: number;
   saledPrice: number;
   rating: number;
+  image: mainImages;
+  category: string;
 };
 
 export interface ProductData {
   bookmarks: number;
   buyQuantity: number;
+  myBookmarkId: number;
   createdAt: string | Date;
   name: string;
   price: number;
   extra: extra;
   mainImages: mainImages[];
+  image: mainImages;
   options: number;
   replies: number;
   seller: user;
@@ -53,6 +66,26 @@ export interface ProductData {
   shippingFees: number;
   updatedAt: string | Date;
   _id: number;
+  content: string;
+  quantity: number;
+  review: ReviewProductData;
+  rating: number;
+}
+
+export interface ReviewProductData {
+  review: {
+    rating: number;
+    content: string;
+    extra: {
+      image: string;
+    };
+    user: {
+      _id: number;
+      name: string;
+      image: string;
+    };
+    createdAt: string;
+  };
 }
 
 export interface BoardData {
@@ -65,6 +98,7 @@ export interface BoardData {
   updatedAt: string | Date;
   user: user;
   _id: number;
+  replies: ReplyData[];
 }
 
 export interface OrderData {
@@ -80,3 +114,52 @@ export type SetHeaderContents = {
   headerContents: object;
   setHeaderContents: React.Dispatch<React.SetStateAction<object>>;
 };
+
+export interface PayData {
+  selectedItems?: { product: ProductData; quantity: number }[];
+  totalFees?: number;
+  memo?: { memo?: string };
+  currentAddress?: {
+    userName?: string;
+    name?: string;
+    phone?: string;
+    value?: string;
+  };
+}
+
+export interface ReviewData {
+  _id: number;
+  user_id: number;
+  user: user;
+  order_id: number;
+  product_id: number;
+  rating: 1 | 2 | 3 | 4 | 5;
+  content: string;
+  createdAt: string;
+  extra: extra;
+  product: ProductData;
+}
+
+export interface CartData {
+  item: {
+    product: ProductData;
+    product_id: number;
+    quantity: number;
+    _id: number;
+  }[];
+  cost: {
+    products: number;
+    shippingFees: number;
+    discount: {
+      products: number;
+      shippingFees: number;
+    };
+  };
+}
+
+export interface ReplyData {
+  content: string;
+  user: user;
+  _id: number;
+  createdAt: string;
+}

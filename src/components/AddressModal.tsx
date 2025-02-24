@@ -6,10 +6,20 @@ import useAxiosInstance from "@hooks/useAxiosInstance";
 import PortOne from "@portone/browser-sdk/v2";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { Dispatch, MouseEventHandler, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { user } from "types";
+
+interface FormData extends user {
+  userName: string;
+  name: string;
+  value: string;
+  detailValue: string;
+  phone: string;
+  confirmPassword: string;
+}
 
 AddressModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
@@ -34,6 +44,12 @@ export default function AddressModal({
   userData,
   addressId,
   setAddressId,
+}: {
+  isOpen: boolean;
+  onClose: (value?: React.SetStateAction<boolean>) => void;
+  userData: user;
+  addressId: number;
+  setAddressId: Dispatch<React.SetStateAction<number>>;
 }) {
   // 신규 배송지 입력 폼 토글 상태
   const [isOpenForm, setIsOpenForm] = useState(false);
@@ -54,14 +70,14 @@ export default function AddressModal({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormData>({
     mode: "onSubmit", // 유효성 검사 실행 시점
   });
 
   const queryClient = useQueryClient();
   // 기본 배송지 추가 (배송지가 하나도 없는 상태)
   const addDefaultAddress = useMutation({
-    mutationFn: async (formData) => {
+    mutationFn: async (formData: FormData) => {
       const defaultAddress = {
         phone: formData.phone,
         address: `${formData.value} ${formData.detailValue}`,
@@ -82,7 +98,7 @@ export default function AddressModal({
 
   // 추가 배송지 추가
   const addAddress = useMutation({
-    mutationFn: async (formData) => {
+    mutationFn: async (formData: FormData) => {
       // addressBook 속성이 없으면 에러가 나기에 빈배열로 할당
       const currentAddressBook = userData.extra?.addressBook || [];
       // 새롭게 추가될 주소를 더한 extra 속성
@@ -94,7 +110,7 @@ export default function AddressModal({
             {
               // 처음 추가되는 주소라면 아이디를 1로, 아니라면 마지막 주소 아이디 + 1
               id: addressBook?.length
-                ? addressBook[addressBook.length - 1].id + 1
+                ? addressBook[addressBook.length - 1].id! + 1
                 : 1,
               userName: formData.userName,
               name: formData.name,
@@ -123,8 +139,8 @@ export default function AddressModal({
 
   // 배송지 삭제
   const deleteAddress = useMutation({
-    mutationFn: async (targetId) => {
-      const filteredAddressList = addressBook.filter(
+    mutationFn: async (targetId: number) => {
+      const filteredAddressList = addressBook?.filter(
         (item) => item.id !== targetId
       );
       const newAddressList = {
@@ -203,7 +219,7 @@ export default function AddressModal({
                 선택됨
               </span>
             ) : (
-              <Button onClick={() => setAddressId(item.id)}>선택</Button>
+              <Button onClick={() => setAddressId(item.id!)}>선택</Button>
             )}
           </div>
         </div>
@@ -212,7 +228,7 @@ export default function AddressModal({
           <Button
             isWhite={true}
             color="white"
-            onClick={() => deleteAddress.mutate(item.id)}
+            onClick={() => deleteAddress.mutate(item.id!)}
           >
             삭제
           </Button>
@@ -260,8 +276,10 @@ export default function AddressModal({
             <form
               onSubmit={
                 userData.address && userData.name && userData.phone
-                  ? handleSubmit(addAddress.mutate)
-                  : handleSubmit(addDefaultAddress.mutate)
+                  ? handleSubmit((data) => addAddress.mutate(data, undefined))
+                  : handleSubmit((data) =>
+                      addDefaultAddress.mutate(data, undefined)
+                    )
               }
               className="my-4 bg-gray1 p-3 rounded-lg"
             >

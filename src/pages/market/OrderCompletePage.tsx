@@ -4,10 +4,11 @@ import usePayStore from "@zustand/usePayStore";
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { PayData, ProductData, SetHeaderContents } from "types";
 
 export default function OrderCompletePage() {
   // 헤더 아이콘 설정
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   // 결제 완료 정보 가져오기
   const { payData, resetPayData } = usePayStore();
 
@@ -69,7 +70,7 @@ export default function OrderCompletePage() {
             <div className="flex justify-between items-center border-b">
               <span className="text-gray4">결제금액</span>
               <span className="text-xl text-btn-primary font-semibold">
-                {`${totalFees.toLocaleString()}원`}
+                {`${totalFees?.toLocaleString()}원`}
               </span>
             </div>
             <div className="space-y-2 border-b">

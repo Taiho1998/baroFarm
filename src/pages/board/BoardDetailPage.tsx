@@ -15,9 +15,10 @@ import Spinner from "@components/Spinner";
 import { Helmet } from "react-helmet-async";
 import { toast } from "react-toastify";
 import ShowConfirmToast from "@components/ShowConfirmToast";
+import { BoardData, SetHeaderContents } from "types";
 
 export default function BoardDetailPage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
   const { _id } = useParams();
   const { user } = useUserStore();
@@ -36,12 +37,13 @@ export default function BoardDetailPage() {
     });
   }, []);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["posts", _id],
-    queryFn: () => axios.get(`/posts/${_id}`),
-    select: (res) => res.data.item,
-    staleTime: 1000 * 10,
-  });
+  const { data, isLoading }: { data?: BoardData; isLoading: boolean } =
+    useQuery({
+      queryKey: ["posts", _id],
+      queryFn: () => axios.get(`/posts/${_id}`),
+      select: (res) => res.data.item,
+      staleTime: 1000 * 10,
+    });
 
   if (isLoading) {
     return <Spinner />;
@@ -61,7 +63,7 @@ export default function BoardDetailPage() {
     }
   };
 
-  const newDate = createdTime(data.createdAt);
+  const newDate = createdTime(new Date(data!.createdAt));
 
   return (
     <>
@@ -72,7 +74,7 @@ export default function BoardDetailPage() {
         <div className="flex flex-row mt-5 items-center">
           <img
             src={
-              data.user.image
+              data?.user.image
                 ? data.user.image.includes("http://") ||
                   data.user.image.includes("https://")
                   ? data.user.image
@@ -82,26 +84,26 @@ export default function BoardDetailPage() {
             alt="ProfileImage"
             className="w-6 h-6 rounded-full object-cover"
           />
-          <span className="mx-[5px] text-sm">{data.user.name}</span>
+          <span className="mx-[5px] text-sm">{data?.user.name}</span>
           <span className="text-[10px] ml-auto self-start text-gray4">
             {newDate}
           </span>
         </div>
         <div className="mx-[5px] my-[30px]">
-          {data.content.split("<br/>").map((line, index) => (
+          {data?.content.split("<br/>").map((line: string, index: number) => (
             <Fragment key={index}>
               {line}
               <br />
             </Fragment>
           ))}
         </div>
-        {data.image && (
+        {data?.image && (
           <img
             className="relative mt-10 mb-1 rounded-md mx-auto"
             src={`https://11.fesp.shop${data.image}`}
           />
         )}
-        {data.user._id === user?._id && (
+        {data?.user._id === user?._id && (
           <div className="text-right text-sm">
             <Link className="underline" to="edit" state={{ data: data }}>
               수정
@@ -112,7 +114,7 @@ export default function BoardDetailPage() {
             </button>
           </div>
         )}
-        <Comment replies={data.replies} />
+        <Comment replies={data?.replies} />
       </div>
     </>
   );

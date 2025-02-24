@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import clsx from "clsx";
+import { MouseEventHandler, ReactNode } from "react";
 
 Button.propTypes = {
   children: PropTypes.node.isRequired,
@@ -16,6 +17,12 @@ export default function Button({
   onClick: clickHandler,
   isBig = false,
   isWhite = false,
+}: {
+  children: ReactNode;
+  type?: "button" | "submit" | "reset";
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  isBig?: boolean;
+  isWhite?: boolean;
 }) {
   const baseClasses =
     "flex items-center justify-center rounded-md shrink-0 self-start";

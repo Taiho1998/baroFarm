@@ -1,6 +1,7 @@
 import useAxiosInstance from "@hooks/useAxiosInstance";
 import { useQuery } from "@tanstack/react-query";
 import PropTypes from "prop-types";
+import { ProductData } from "types";
 
 ProductToBuy.propTypes = {
   product: PropTypes.shape({
@@ -17,7 +18,13 @@ ProductToBuy.propTypes = {
   quantity: PropTypes.number.isRequired,
 };
 
-export default function ProductToBuy({ product, quantity }) {
+export default function ProductToBuy({
+  product,
+  quantity,
+}: {
+  product: ProductData;
+  quantity: number;
+}) {
   const axios = useAxiosInstance();
 
   // 넘어온 데이터 기반으로 seller의 닉네임 fetching

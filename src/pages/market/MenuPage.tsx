@@ -13,10 +13,11 @@ import riceCakeImage from "/images/menu/Ricecake.svg";
 
 import MenuItem from "@components/MenuItem";
 import HeaderIcon from "@components/HeaderIcon";
+import { SetHeaderContents } from "types";
 
 export default function MenuPage() {
   // Outlet 컴포넌트로 전달받은 props.setHeadetContents 접근
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
 
   useEffect(() => {

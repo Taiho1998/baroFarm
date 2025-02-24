@@ -6,9 +6,10 @@ import Spinner from "@components/Spinner";
 import DataErrorPage from "@pages/DataErrorPage";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosInstance from "@hooks/useAxiosInstance";
+import { ProductData, SetHeaderContents } from "types";
 
 export default function SearchBestPage() {
-  const { setHeaderContents } = useOutletContext();
+  const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,7 +33,9 @@ export default function SearchBestPage() {
   if (isError) return <DataErrorPage />;
 
   // 인기 상품 렌더링
-  const sortedBestData = data.toSorted((a, b) => b.buyQuantity - a.buyQuantity);
+  const sortedBestData = data.toSorted(
+    (a: ProductData, b: ProductData) => b.buyQuantity - a.buyQuantity
+  );
 
   return <Products productsData={sortedBestData} />;
 }

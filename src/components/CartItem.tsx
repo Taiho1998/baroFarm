@@ -1,9 +1,11 @@
 import Checkbox from "@components/Checkbox";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { UseMutationResult, useQuery } from "@tanstack/react-query";
+import axios, { AxiosResponse } from "axios";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
+import { FieldValues, UseFormRegister } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { ProductData } from "types";
 
 CartItem.propTypes = {
   _id: PropTypes.number.isRequired,
@@ -39,6 +41,23 @@ export default function CartItem({
   updateItem,
   toggleCartItemCheck,
   isChecked,
+}: {
+  _id: number;
+  quantity: number;
+  product: ProductData;
+  register: UseFormRegister<FieldValues>;
+  deleteItem: UseMutationResult<void, Error, number, unknown>;
+  updateItem: UseMutationResult<
+    AxiosResponse<any, any>,
+    Error,
+    {
+      _id: number;
+      quantity: number;
+    },
+    unknown
+  >;
+  toggleCartItemCheck: (targetId: number) => void;
+  isChecked?: boolean;
 }) {
   // 판매자 이름 상태관리
   const [seller, setSeller] = useState("");
@@ -71,9 +90,9 @@ export default function CartItem({
       <div className="pt-[10px] flex gap-3">
         <Checkbox
           name={`${_id}`}
-          register={register(`${_id}`)}
+          register={register}
           onClick={() => toggleCartItemCheck(_id)}
-          checked={isChecked}
+          checked={isChecked as boolean}
         />
         <img
           src={`https://11.fesp.shop${product.image.path}`}

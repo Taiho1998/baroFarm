@@ -1,8 +1,12 @@
 import PGButton from "@components/PGButton";
 import PortOne from "@portone/browser-sdk/v2";
+import { UseMutationResult } from "@tanstack/react-query";
+import { AxiosResponse } from "axios";
 import PropTypes from "prop-types";
+import { MouseEventHandler } from "react";
 import { createPortal } from "react-dom";
 import { toast } from "react-toastify";
+import { ProductData } from "types";
 
 PaymentModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
@@ -14,11 +18,27 @@ PaymentModal.propTypes = {
   purchaseItem: PropTypes.object.isRequired,
 };
 
+interface prodType {
+  selectedItems: { product: ProductData; quantity: number }[];
+  totalFees: number;
+}
+
 export default function PaymentModal({
   isOpen,
   onClose,
   productData,
   purchaseItem,
+}: {
+  isOpen: boolean;
+  onClose: MouseEventHandler<HTMLButtonElement> &
+    MouseEventHandler<HTMLDivElement>;
+  productData: prodType;
+  purchaseItem: UseMutationResult<
+    AxiosResponse<any, any>,
+    Error,
+    { _id: number; quantity: number },
+    unknown
+  >;
 }) {
   if (!isOpen) return null;
 
@@ -51,7 +71,7 @@ export default function PaymentModal({
       payMethod: "EASY_PAY",
     });
 
-    if (response.code !== undefined) {
+    if (response?.code !== undefined) {
       // 오류 발생
       return toast.error(response.message);
     }
@@ -80,7 +100,7 @@ export default function PaymentModal({
     });
     console.log(response);
 
-    if (response.code !== undefined) {
+    if (response?.code !== undefined) {
       // 오류 발생
       return toast.error(response.message);
     }

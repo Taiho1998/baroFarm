@@ -1,3 +1,10 @@
+declare global {
+  interface Window {
+    Kakao: any;
+    //Kakao API를 사용하는 것이기에 임의로 any로 설정
+  }
+}
+
 import CryptoJS from "crypto-js";
 import HeaderIcon from "@components/HeaderIcon";
 import useAxiosInstance from "@hooks/useAxiosInstance";
@@ -18,6 +25,11 @@ import { SetHeaderContents, UserStore } from "types";
 export default function LoginPage() {
   type LocationState = {
     from?: string;
+  };
+
+  type FieldValues = {
+    email: string;
+    password: string;
   };
 
   const location = useLocation() as { state: LocationState | null };
@@ -75,13 +87,13 @@ export default function LoginPage() {
     getValues, // 현재 폼에 입력된 값들을 가져오는 함수
     setValue, // 폼 입력 필드에 값을 직접 설정하는 함수
     reset, // 폼의 초기값을 설정하거나 입력 필드의 값을 초기화하는 함수
-  } = useForm({ mode: "onBlur" });
+  } = useForm<FieldValues>({ mode: "onBlur" });
 
   // store는 zustand에서 상태(state)객체를 나타내기 위해 관용적으로 사용하는 이름
   const setUser = useUserStore((store: UserStore) => store.setUser);
   const axios = useAxiosInstance();
   const login = useMutation({
-    mutationFn: (formData) => axios.post("/users/login", formData),
+    mutationFn: (formData: FieldValues) => axios.post("/users/login", formData),
     onSuccess: (res) => {
       // console.log(res);
 
@@ -120,13 +132,24 @@ export default function LoginPage() {
     onError: (err) => {
       console.error("로그인 에러:", err);
       // 422: 입력값 검증 오류
-      if (err.response?.data.errors) {
-        err.response?.data.errors.forEach((error) =>
-          setError(error.path, { message: error.msg })
-        );
-      } else {
-        // 403:로그인 실패, 500:서버 에러
-        toast.error(err.response?.data.message || "잠시후 다시 요청하세요.");
+      if (typeof err === "object" && "response" in err) {
+        const response = err.response as {
+          data: {
+            errors: {
+              path: "email" | "password";
+              msg: string;
+            }[];
+            message: string;
+          };
+        };
+        if (response.data.errors) {
+          response.data.errors.forEach((error) =>
+            setError(error.path, { message: error.msg })
+          );
+        } else {
+          // 403:로그인 실패, 500:서버 에러
+          toast.error(response.data.message || "잠시후 다시 요청하세요.");
+        }
       }
     },
   });
@@ -174,7 +197,7 @@ export default function LoginPage() {
         </div>
 
         {/* 폼 영역 */}
-        <form onSubmit={handleSubmit(login.mutate)}>
+        <form onSubmit={handleSubmit((data) => login.mutate(data, undefined))}>
           <div className="border-b-2 border-gray2 mb-8 focus-within:border-b-btn-primary">
             <input
               type="email"
