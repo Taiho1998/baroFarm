@@ -13,6 +13,6 @@ ProtectedRoute.propTypes = {
 };
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const user: user = useUserStore((store: UserStore) => store.user);
+  const user = useUserStore((store: UserStore) => store.user);
   return user ? <>{children}</> : <Navigate to="/users/login" />;
 }

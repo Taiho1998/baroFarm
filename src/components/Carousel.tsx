@@ -4,6 +4,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
+import { ProductData } from "types";
 
 Carousel.propTypes = {
   width: PropTypes.number,
@@ -11,7 +12,15 @@ Carousel.propTypes = {
   data: PropTypes.array.isRequired,
 };
 
-export default function Carousel({ width = 390, height, data }) {
+export default function Carousel({
+  width = 390,
+  height,
+  data,
+}: {
+  width?: number;
+  height: number;
+  data: ProductData[];
+}) {
   const navigate = useNavigate();
 
   const slides = data.map((item, index) => (

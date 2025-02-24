@@ -19,11 +19,11 @@ export default function Checkbox({
   onChange,
   checked = false,
 }: {
-  id: string;
+  id?: string;
   name: string;
   register?: UseFormRegister<FieldValues>;
   onClick?: MouseEventHandler<HTMLInputElement>;
-  onChange: ChangeEventHandler<HTMLInputElement>;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
   checked: boolean;
 }) {
   return (

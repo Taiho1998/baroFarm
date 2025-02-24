@@ -16,7 +16,7 @@ export default function MyPage() {
 
   // zustand store에서 유저 상태 가져옴
   // 유저가 로그인 상태인지 확인하는 용도
-  const user: user = useUserStore((store: UserStore) => store.user);
+  const user = useUserStore((store: UserStore) => store.user);
 
   const axios = useAxiosInstance();
 
@@ -49,7 +49,7 @@ export default function MyPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["user", user?._id],
-    queryFn: () => axios.get(`/users/${user._id}`),
+    queryFn: () => axios.get(`/users/${user?._id}`),
     select: (res) => res.data.item,
     staleTime: 1000 * 10,
     enabled: !!user,

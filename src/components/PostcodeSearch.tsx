@@ -12,8 +12,11 @@ PostcodeSearch.propTypes = {
 };
 
 interface FormData extends user {
+  userName: string;
+  name: string;
   value: string;
   detailValue: string;
+  phone: string;
   confirmPassword: string;
 }
 

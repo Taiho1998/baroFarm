@@ -6,6 +6,7 @@ NavItem.propTypes = {
   defaultIcon: PropTypes.string.isRequired,
   activeIcon: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
+  end: PropTypes.bool,
 };
 
 export default function NavItem({
@@ -13,14 +14,16 @@ export default function NavItem({
   defaultIcon,
   activeIcon,
   label,
+  end = false,
 }: {
   to: string;
   defaultIcon: string;
   activeIcon: string;
   label: string;
+  end?: boolean;
 }) {
   return (
-    <NavLink to={to} className="flex flex-col items-center">
+    <NavLink to={to} end={end} className="flex flex-col items-center">
       {({ isActive }) => (
         <>
           <img

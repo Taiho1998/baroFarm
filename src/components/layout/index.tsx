@@ -5,7 +5,11 @@ import { Outlet, useLocation } from "react-router-dom";
 
 export default function Layout() {
   // 헤더 title을 동적으로 렌더링하기 위한 상태 관리
-  const [headerContents, setHeaderContents] = useState<object>({});
+  const [headerContents, setHeaderContents] = useState<{
+    leftChild?: React.ReactNode;
+    title?: string;
+    rightChild?: React.ReactNode;
+  }>({});
   const { pathname } = useLocation();
 
   const showFooter =

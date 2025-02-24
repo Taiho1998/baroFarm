@@ -18,6 +18,13 @@ type UserExtra = {
   birth?: string;
   gender?: string;
   userName?: string;
+  addressBook: {
+    id?: number;
+    userName: string;
+    name: string;
+    phone: string;
+    value: string;
+  }[];
 };
 
 export interface UserStore {

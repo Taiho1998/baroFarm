@@ -53,7 +53,7 @@ export default function Footer() {
       />
       <NavItem
         to="/"
-        end
+        end={true}
         defaultIcon={icons.home.default}
         activeIcon={icons.home.active}
         label="홈"

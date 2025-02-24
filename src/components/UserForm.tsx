@@ -7,8 +7,11 @@ import { useForm } from "react-hook-form";
 import { user } from "types";
 
 interface FormData extends user {
+  userName: string;
+  name: string;
   value: string;
   detailValue: string;
+  phone: string;
   confirmPassword: string;
 }
 
