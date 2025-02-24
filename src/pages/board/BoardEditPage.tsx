@@ -14,9 +14,12 @@ import {
   useParams,
 } from "react-router-dom";
 import { toast } from "react-toastify";
-import { SetHeaderContents } from "types";
+import { BoardData, SetHeaderContents } from "types";
 
 interface FormData {
+  order_id?: number;
+  product_id?: number;
+  rating: number;
   content: string;
   image: File[];
 }
@@ -25,7 +28,7 @@ export default function BoardEditPage() {
   const { setHeaderContents } = useOutletContext<SetHeaderContents>();
   const navigate = useNavigate();
   const location = useLocation();
-  const data = location.state.data;
+  const data: BoardData | undefined = location.state.data;
   const { _id } = useParams();
   const axios = useAxiosInstance();
   const queryClient = useQueryClient();
@@ -123,7 +126,7 @@ export default function BoardEditPage() {
         isBoard={true}
         handleSubmit={handleSubmit((data) => editPost.mutate(data, undefined))}
         register={register}
-        editInfo={data.content}
+        editInfo={data?.content}
       />
     </>
   );

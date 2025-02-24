@@ -19,7 +19,6 @@ import { CartData, ProductData, SetHeaderContents } from "types";
 
 export default function CartPage() {
   const axios = useAxiosInstance();
-  const { user } = useUserStore();
   // 구매할 물품 선택을 위한 폼
   const { register, handleSubmit } = useForm();
   // 결제 버튼 보이기 상태
@@ -101,7 +100,7 @@ export default function CartPage() {
   // 장바구니 상품 삭제
   const queryClient = useQueryClient();
   const deleteItem = useMutation({
-    mutationFn: async (_id) => {
+    mutationFn: async (_id: number) => {
       const ok = await ShowConfirmToast("상품을 삭제하시겠습니까?");
       if (ok) {
         axios.delete(`/carts/${_id}`);
@@ -332,7 +331,9 @@ export default function CartPage() {
                         id="checkAll"
                         name="checkAll"
                         checked={checkedItemsIds?.length === data?.item.length}
-                        onChange={(e) => toggleCheckAll(e.target.checked)}
+                        onChange={(e: { target: { checked: boolean } }) =>
+                          toggleCheckAll(e.target.checked)
+                        }
                       />
                       전체 선택 ({checkedItemsIds?.length}/{itemList?.length})
                     </label>

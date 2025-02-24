@@ -8,7 +8,17 @@ NavItem.propTypes = {
   label: PropTypes.string.isRequired,
 };
 
-export default function NavItem({ to, defaultIcon, activeIcon, label }) {
+export default function NavItem({
+  to,
+  defaultIcon,
+  activeIcon,
+  label,
+}: {
+  to: string;
+  defaultIcon: string;
+  activeIcon: string;
+  label: string;
+}) {
   return (
     <NavLink to={to} className="flex flex-col items-center">
       {({ isActive }) => (

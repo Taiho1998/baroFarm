@@ -10,8 +10,8 @@ export type user = {
   type?: string;
   phone?: string;
   address?: string;
-  extra: UserExtra;
-  password: string;
+  extra?: UserExtra;
+  password?: string;
 };
 
 type UserExtra = {

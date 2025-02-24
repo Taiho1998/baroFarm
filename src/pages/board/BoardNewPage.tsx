@@ -10,6 +10,9 @@ import { toast } from "react-toastify";
 import { SetHeaderContents } from "types";
 
 interface formData {
+  order_id?: number;
+  product_id?: number;
+  rating: number;
   content: string;
   image: File[];
 }
@@ -126,7 +129,7 @@ export default function BoardNewPage() {
         handleSubmit={handleSubmit((data) => addItem.mutate(data, undefined))}
         register={register}
         errors={errors}
-      ></NewPost>
+      />
     </>
   );
 }

@@ -98,7 +98,7 @@ export default function ProductNewReviewPage() {
         handleSubmit={handleSubmit((data) => addReview.mutate(data, undefined))}
         register={register}
         handleRating={handleRating}
-      ></NewPost>
+      />
     </>
   );
 }

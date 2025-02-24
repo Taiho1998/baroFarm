@@ -1,4 +1,6 @@
 import PropTypes from "prop-types";
+import { ChangeEventHandler, MouseEventHandler } from "react";
+import { FieldValues, UseFormRegister } from "react-hook-form";
 
 Checkbox.propTypes = {
   id: PropTypes.string,
@@ -16,19 +18,38 @@ export default function Checkbox({
   onClick,
   onChange,
   checked = false,
+}: {
+  id: string;
+  name: string;
+  register?: UseFormRegister<FieldValues>;
+  onClick?: MouseEventHandler<HTMLInputElement>;
+  onChange: ChangeEventHandler<HTMLInputElement>;
+  checked: boolean;
 }) {
   return (
     <div className="relative flex">
-      <input
-        id={id}
-        name={name}
-        onClick={onClick}
-        onChange={onChange}
-        checked={checked}
-        type="checkbox"
-        className="peer size-4 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-slate-300 checked:bg-btn-primary checked:border-btn-primary"
-        {...register}
-      />
+      {register && (
+        <input
+          id={id}
+          onClick={onClick}
+          checked={checked}
+          type="checkbox"
+          className="peer size-4 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-slate-300 checked:bg-btn-primary checked:border-btn-primary"
+          {...register(`${id}`)}
+        />
+      )}
+
+      {!!register && (
+        <input
+          id={id}
+          name={name}
+          onClick={onClick}
+          onChange={onChange}
+          checked={checked}
+          type="checkbox"
+          className="peer size-4 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-slate-300 checked:bg-btn-primary checked:border-btn-primary"
+        />
+      )}
       <span className="absolute text-white opacity-0 peer-checked:opacity-100 top-[1px] left-[8px] transform -translate-x-1/2 pointer-events-none">
         <svg
           xmlns="http://www.w3.org/2000/svg"

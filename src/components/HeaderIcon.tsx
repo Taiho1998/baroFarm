@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import useUserStore from "@zustand/useUserStore";
 import axios from "axios";
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 HeaderIcon.propTypes = {
@@ -12,7 +12,13 @@ HeaderIcon.propTypes = {
   onClick: PropTypes.func,
 };
 
-export default function HeaderIcon({ name, onClick }) {
+export default function HeaderIcon({
+  name,
+  onClick,
+}: {
+  name: string;
+  onClick: MouseEventHandler<HTMLButtonElement>;
+}) {
   const axios = useAxiosInstance();
   // 장바구니가 차 있는지 아닌지 확인하는 상태관리 변수
   const [isFullCart, setIsFullCart] = useState(false);

@@ -8,7 +8,15 @@ MenuItem.propTypes = {
   title: PropTypes.string.isRequired,
 };
 
-export default function MenuItem({ to, image, title }) {
+export default function MenuItem({
+  to,
+  image,
+  title,
+}: {
+  to: string;
+  image: string;
+  title: string;
+}) {
   return (
     <Link
       to={to}

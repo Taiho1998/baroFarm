@@ -17,6 +17,13 @@ interface FormData extends user {
   confirmPassword: string;
 }
 
+declare global {
+  interface Window {
+    daum: any;
+    //Kakao API를 사용하는 것이기에 임의로 any로 설정
+  }
+}
+
 export default function PostcodeSearch({
   isOpenIframe,
   setIsOpenIframe,
@@ -25,13 +32,17 @@ export default function PostcodeSearch({
 }: {
   isOpenIframe: boolean;
   setIsOpenIframe: React.Dispatch<React.SetStateAction<boolean>>;
-  register: UseFormRegister<FormData> | UseFormRegister<FieldValues>;
-  errors: FieldErrors<FormData> | FieldErrors<FieldValues>;
+  register: UseFormRegister<FormData>;
+  errors: FieldErrors<FormData>;
 }) {
   // 주소 검색 iframe에 접근
-  const iframeRef = useRef(null);
+  const iframeRef = useRef<HTMLDivElement | null>(null);
   // 배송지 주소 상태 관리
-  const [address, setAddress] = useState({});
+  const [address, setAddress] = useState<{
+    postcode?: number;
+    address?: string;
+    bname?: string;
+  }>({});
 
   // 다이나믹 하게 스크립트 추가
   useEffect(() => {
@@ -51,7 +62,11 @@ export default function PostcodeSearch({
   function execDaumPostcode() {
     new window.daum.Postcode({
       // 주소 입력 완료시 실행될 함수
-      oncomplete: function (data) {
+      oncomplete: function (data: {
+        zonecode: number;
+        address: string;
+        bname: string;
+      }) {
         console.log("주소 검색 결과:", data);
         setAddress({
           postcode: data.zonecode,
@@ -63,8 +78,8 @@ export default function PostcodeSearch({
       width: "100%",
       height: "100%",
       // 내부
-      onresize: function (size) {
-        iframeRef.current.style.height = size.height + 4 + "px";
+      onresize: function (size: { height: number }) {
+        iframeRef.current!.style.height = size.height + 4 + "px";
       },
     }).embed(iframeRef.current);
 
