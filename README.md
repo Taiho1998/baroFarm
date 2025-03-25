@@ -38,4 +38,88 @@
   <img src="https://img.shields.io/badge/zustand-00B899?style=for-the-badge&logo=&logoColor=white">
   <img src="https://img.shields.io/badge/tanstack query-FF4154?style=for-the-badge&logo=reactquery&logoColor=white">
   <!-- 라우팅 -->
-  <img src="https://img.shields.io/badge/reactrouter-CA4245?style=for-the-badge&logo=reactrouter&lo환</b>
+  <img src="https://img.shields.io/badge/reactrouter-CA4245?style=for-the-badge&logo=reactrouter&logoColor=white">
+  <!-- 배포 -->
+  <img src="https://img.shields.io/badge/netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white">
+</div>
+<br>
+<br>
+
+### 🐝 팀원 소개 및 담당 역할
+
+<table style="border-collapse: collapse;">
+    <tr>
+      <td style="border: 1px solid #ddd; text-align: center;"><p align="center" style="margin: 0;"><strong>강진수 (발표자)</strong></p></td>
+      <td style="border: 1px solid #ddd; text-align: center;"><p align="center" style="margin: 0;"><strong>고태호 (리더)</strong></p></td>
+      <td style="border: 1px solid #ddd; text-align: center;"><p align="center" style="margin: 0;"><strong>권새봄 (팀원)</strong></p></td>
+      <td style="border: 1px solid #ddd; text-align: center;"><p align="center" style="margin: 0;"><strong>황은지 (팀원)</strong></p></td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ddd; text-align: center;">
+        <a href="https://github.com/JSKangx">
+          <img src="./public/images/reademe/jinsu.png" width="150" height="150">
+          <p align="center" style="margin: 0;">JSKangx</p>
+        </a>
+      </td>
+      <td style="border: 1px solid #ddd; text-align: center;">
+        <a href="https://github.com/Taiho1998">
+          <img src="./public/images/reademe/taiho.png" width="150" height="150">
+          <p align="center" style="margin: 0;">Taiho1998</p>
+        </a>
+      </td>
+      <td style="border: 1px solid #ddd; text-align: center;">
+        <a href="https://github.com/kwonsaebom">
+          <img src="./public/images/reademe/seabom.png" width="150" height="150">
+          <p align="center" style="margin: 0;">kwonsaebom</p>
+        </a>
+      </td>
+      <td style="border: 1px solid #ddd; text-align: center;">
+        <a href="https://github.com/gitlookgitlook">
+          <img src="./public/images/reademe/eunji.png" width="150" height="150">
+          <p align="center" style="margin: 0;">gitlookgitlook</p>
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ddd;">
+        <p align="center" style="margin: 0;">
+          메인 페이지<br/>
+          장바구니 페이지<br/>
+          결제 페이지
+        </p>
+      </td>
+      <td style="border: 1px solid #ddd;">
+        <p align="center" style="margin: 0;">
+          마이 페이지<br/>
+          커뮤니티 페이지<br/>
+          상품등록 페이지
+        </p>
+      </td>
+      <td style="border: 1px solid #ddd;">
+        <p align="center" style="margin: 0;">
+          카테고리 페이지<br/>
+          상품상세 페이지<br/>
+          리뷰 페이지
+        </p>
+      </td>
+      <td style="border: 1px solid #ddd;">
+        <p align="center" style="margin: 0;">
+          회원가입<br/>
+          로그인<br/>
+          검색 페이지
+        </p>
+      </td>
+    </tr>
+</table>
+<br>
+<br>
+
+### 📆 개발 기간
+
+<b>24.12.19 - 24.12.27 (1주차) : 프로젝트 기획(디자인 기획 및 요구사항 정의서 작성)</b>
+
+<b>24.12.30 - 25.01.03 (2주차) : 마크업 및 더미 데이터를 사용한 동적 렌더링</b>
+
+<b>25.01.06 - 25.01.17 (3, 4주차) : 작성된 요구사항 정의서에 따른 기능 구현</b>
+
+<b>25.01.20 - 25.01.22 (5주차) : 발표 준비 및 최종 배포</b>
