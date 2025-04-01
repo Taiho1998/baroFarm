@@ -77,10 +77,13 @@ export default function MainPage() {
   // 게시글 데이터 fetching
   const { data: board } = useQuery({
     queryKey: ["posts", "community"],
-    queryFn: () => axios.get("/posts?type=community"),
+    queryFn: () => axios.get("/posts", {
+      params: { type: "community"},
+    }),
     select: (res) => res.data.item,
     staleTime: 1000 * 10,
   });
+  console.log('커뮤니티 데이터: ', board)
 
   if (isLoading) return <Spinner />;
   if (isError) return <DataErrorPage />;

@@ -88,6 +88,7 @@ export default function BoardEditPage() {
           const body = {
             content: item.content.replaceAll(/\n|\r\n/g, "<br/>"),
             image: imageUrl,
+            type: "community"
           };
           return axios.patch(`/posts/${_id}`, body);
         } catch (error) {
@@ -101,6 +102,7 @@ export default function BoardEditPage() {
       } else {
         const body = {
           content: item.content.replaceAll(/\n|\r\n/g, "<br/>"),
+          type: "noPic",
         };
         return axios.patch(`/posts/${_id}`, body);
       }
