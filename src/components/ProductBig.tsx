@@ -22,7 +22,7 @@ ProductBig.propTypes = {
   ).isRequired,
   extra: PropTypes.shape({
     sale: PropTypes.number.isRequired,
-    rating: PropTypes.number.isRequired,
+    rating: PropTypes.number,
   }).isRequired,
   price: PropTypes.number.isRequired,
   replies: PropTypes.number.isRequired, // 댓글 배열

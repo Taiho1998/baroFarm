@@ -1,5 +1,3 @@
-import { Product } from "@portone/browser-sdk/dist/v2/entity";
-
 export type user = {
   _id: number;
   name: string;

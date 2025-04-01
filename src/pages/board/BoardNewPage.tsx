@@ -56,7 +56,7 @@ export default function BoardNewPage() {
   const addItem = useMutation({
     mutationFn: async (item: formData) => {
       let imageUrl = null;
-
+      let contentType: string;
       if (!item.content) {
         throw new Error("본문 내용은 필수로 입력해야 합니다");
       }
@@ -85,20 +85,16 @@ export default function BoardNewPage() {
           );
           throw new Error("Image upload failed.");
         }
-
-        const body = {
-          content: item.content.replace(/\n|\r\n/g, "<br/>"),
-          type: "community",
-          image: imageUrl,
-        };
-        return axios.post(`/posts`, body);
+        contentType = "community";
       } else {
-        const body = {
-          content: item.content,
-          type: "noPic",
-        };
-        return axios.post(`/posts`, body);
+        contentType = "noPic";
       }
+      const body = {
+        content: item.content.replace(/\n|\r\n/g, "<br/>"),
+        type: contentType,
+        image: imageUrl,
+      };
+      return axios.post(`/posts`, body);
     },
     onSuccess: () => {
       toast.success("게시물이 등록되었습니다.");

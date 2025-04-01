@@ -4,6 +4,9 @@
 bruno-sample
 *.bru
 
+#.next
+.next/
+
 # Logs
 logs
 *.log
