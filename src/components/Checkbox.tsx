@@ -14,7 +14,7 @@ Checkbox.propTypes = {
 export default function Checkbox({
   id,
   name,
-  register,
+  register = undefined,
   onClick,
   onChange,
   checked = false,
@@ -39,7 +39,7 @@ export default function Checkbox({
         />
       )}
 
-      {!!register && (
+      {!register && (
         <input
           id={id}
           name={name}
