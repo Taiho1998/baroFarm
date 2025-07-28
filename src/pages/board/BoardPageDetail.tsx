@@ -1,8 +1,8 @@
-import createdTime from "@utils/createdTime.js";
-import PropTypes from "prop-types";
-import { Fragment, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { BoardData } from "types";
+import createdTime from '@utils/createdTime.js';
+import PropTypes from 'prop-types';
+import { Fragment, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { BoardData } from 'types';
 
 BoardPageDetail.propTypes = {
   item: PropTypes.shape({
@@ -33,57 +33,57 @@ export default function BoardPageDetail({ item }: { item: BoardData }) {
 
   const newDate = createdTime(new Date(item.createdAt));
   return (
-    <div className="relative">
+    <div className='relative'>
       <Link to={`/board/${item._id}`}>
         <div
           ref={containerRef}
-          className="max-h-[550px] overflow-hidden relative"
+          className='max-h-[550px] overflow-hidden relative'
         >
-          <div className="flex flex-row mt-5 items-center">
+          <div className='flex flex-row mt-5 items-center'>
             <img
               src={
                 item.user.image
-                  ? item.user.image.includes("http://") ||
-                    item.user.image.includes("https://")
+                  ? item.user.image.includes('http://') ||
+                    item.user.image.includes('https://')
                     ? item.user.image
-                    : `https://11.fesp.shop${item.user.image}`
-                  : "/images/profile/ProfileImage_Sample.jpg"
+                    : `https://fesp-api.koyeb.app/market${item.user.image}`
+                  : '/images/profile/ProfileImage_Sample.jpg'
               }
-              alt="ProfileImage"
-              className="w-6 h-6 rounded-full object-cover"
+              alt='ProfileImage'
+              className='w-6 h-6 rounded-full object-cover'
             />
-            <span className="mx-[5px] text-sm">{item.user.name}</span>
+            <span className='mx-[5px] text-sm'>{item.user.name}</span>
 
-            <span className="ml-auto text-xs self-start">
+            <span className='ml-auto text-xs self-start'>
               댓글 {item.repliesCount}개
             </span>
           </div>
-          <div className="mx-[5px] mt-[30px]">
-            {item.content.split("<br/>").map((line: string, index: number) => (
+          <div className='mx-[5px] mt-[30px]'>
+            {item.content.split('<br/>').map((line: string, index: number) => (
               <Fragment key={index}>
                 {line}
                 <br />
               </Fragment>
             ))}
           </div>
-          <div className="mt-10">
+          <div className='mt-10'>
             {item.image && (
               <img
-                className="relative rounded-md mx-auto"
-                src={`https://11.fesp.shop${item.image}`}
+                className='relative rounded-md mx-auto'
+                src={`https://fesp-api.koyeb.app/market${item.image}`}
                 onLoad={() => checkOverflow()}
               />
             )}
             {isOverflow && (
-              <div className="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+              <div className='absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-white to-transparent pointer-events-none'></div>
             )}
           </div>
         </div>
-        <span className="text-[10px] text-gray4 text-left mb-5 block">
+        <span className='text-[10px] text-gray4 text-left mb-5 block'>
           {newDate}
         </span>
       </Link>
-      <div className="h-[7px] bg-gray1 -mx-5"></div>
+      <div className='h-[7px] bg-gray1 -mx-5'></div>
     </div>
   );
 }

@@ -1,12 +1,12 @@
-import createdTime from "@utils/createdTime";
-import useAxiosInstance from "@hooks/useAxiosInstance";
-import { useQueryClient } from "@tanstack/react-query";
-import useUserStore from "@zustand/useUserStore";
-import PropTypes from "prop-types";
-import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
-import ShowConfirmToast from "@components/ShowConfirmToast";
-import { ReplyData } from "types";
+import createdTime from '@utils/createdTime';
+import useAxiosInstance from '@hooks/useAxiosInstance';
+import { useQueryClient } from '@tanstack/react-query';
+import useUserStore from '@zustand/useUserStore';
+import PropTypes from 'prop-types';
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import ShowConfirmToast from '@components/ShowConfirmToast';
+import { ReplyData } from 'types';
 
 CommentItem.propTypes = {
   item: PropTypes.shape({
@@ -28,12 +28,12 @@ export default function CommentItem({ item }: { item: ReplyData }) {
   const queryClient = useQueryClient();
 
   const deleteComment = async () => {
-    const isConfirmed = await ShowConfirmToast("댓글을 삭제하시겠습니까?");
+    const isConfirmed = await ShowConfirmToast('댓글을 삭제하시겠습니까?');
     if (isConfirmed) {
       const response = await axios.delete(`/posts/${_id}/replies/${item._id}`);
       if (response.status === 200) {
-        toast.success("댓글 삭제가 완료되었습니다.");
-        queryClient.invalidateQueries({ queryKey: ["posts", _id] });
+        toast.success('댓글 삭제가 완료되었습니다.');
+        queryClient.invalidateQueries({ queryKey: ['posts', _id] });
       }
     }
   };
@@ -41,29 +41,29 @@ export default function CommentItem({ item }: { item: ReplyData }) {
   const newDate = createdTime(new Date(item.createdAt));
   return (
     <>
-      <div className="flex flex-row mt-5 px-[15px] items-center">
+      <div className='flex flex-row mt-5 px-[15px] items-center'>
         <img
           src={
             item.user.image
-              ? item.user.image.includes("http://") ||
-                item.user.image.includes("https://")
+              ? item.user.image.includes('http://') ||
+                item.user.image.includes('https://')
                 ? item.user.image
-                : `https://11.fesp.shop${item.user.image}`
-              : "/images/profile/ProfileImage_Sample.jpg"
+                : `https://fesp-api.koyeb.app/market${item.user.image}`
+              : '/images/profile/ProfileImage_Sample.jpg'
           }
-          alt="ProfileImage"
-          className="w-6 h-6 rounded-full object-cover"
+          alt='ProfileImage'
+          className='w-6 h-6 rounded-full object-cover'
         />
-        <span className="mx-[5px] text-sm">{item.user.name}</span>
-        <span className="text-[10px] ml-auto text-gray4 self-start">
+        <span className='mx-[5px] text-sm'>{item.user.name}</span>
+        <span className='text-[10px] ml-auto text-gray4 self-start'>
           {newDate}
         </span>
       </div>
-      <div className="flex pb-5 border-b-[1px] border-gray3/50 px-[15px]">
-        <div className="mt-3 text-xs text-gray5 pl-5">{item.content}</div>
+      <div className='flex pb-5 border-b-[1px] border-gray3/50 px-[15px]'>
+        <div className='mt-3 text-xs text-gray5 pl-5'>{item.content}</div>
         {user?._id === item.user._id && (
-          <span className="ml-auto text-xs mt-auto flex-shrink-0">
-            <button className="underline" onClick={deleteComment}>
+          <span className='ml-auto text-xs mt-auto flex-shrink-0'>
+            <button className='underline' onClick={deleteComment}>
               삭제
             </button>
           </span>

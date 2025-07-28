@@ -1,21 +1,21 @@
-import HeaderIcon from "@components/HeaderIcon";
-import useAxiosInstance from "@hooks/useAxiosInstance";
-import Comment from "@pages/board/Comment";
-import createdTime from "@utils/createdTime.js";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import useUserStore from "@zustand/useUserStore";
-import { Fragment, useEffect } from "react";
+import HeaderIcon from '@components/HeaderIcon';
+import useAxiosInstance from '@hooks/useAxiosInstance';
+import Comment from '@pages/board/Comment';
+import createdTime from '@utils/createdTime.js';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import useUserStore from '@zustand/useUserStore';
+import { Fragment, useEffect } from 'react';
 import {
   Link,
   useNavigate,
   useOutletContext,
   useParams,
-} from "react-router-dom";
-import Spinner from "@components/Spinner";
-import { Helmet } from "react-helmet-async";
-import { toast } from "react-toastify";
-import ShowConfirmToast from "@components/ShowConfirmToast";
-import { BoardData, SetHeaderContents } from "types";
+} from 'react-router-dom';
+import Spinner from '@components/Spinner';
+import { Helmet } from 'react-helmet-async';
+import { toast } from 'react-toastify';
+import ShowConfirmToast from '@components/ShowConfirmToast';
+import { BoardData, SetHeaderContents } from 'types';
 
 export default function BoardDetailPage() {
   const { setHeaderContents } = useOutletContext<SetHeaderContents>();
@@ -27,11 +27,11 @@ export default function BoardDetailPage() {
 
   useEffect(() => {
     setHeaderContents({
-      leftChild: <HeaderIcon name="back" onClick={() => navigate(-1)} />,
-      title: "게시글",
+      leftChild: <HeaderIcon name='back' onClick={() => navigate(-1)} />,
+      title: '게시글',
       rightChild: (
         <>
-          <HeaderIcon name="home_empty" onClick={() => navigate("/")} />
+          <HeaderIcon name='home_empty' onClick={() => navigate('/')} />
         </>
       ),
     });
@@ -39,7 +39,7 @@ export default function BoardDetailPage() {
 
   const { data, isLoading }: { data?: BoardData; isLoading: boolean } =
     useQuery({
-      queryKey: ["posts", _id],
+      queryKey: ['posts', _id],
       queryFn: () => axios.get(`/posts/${_id}`),
       select: (res) => res.data.item,
       staleTime: 1000 * 10,
@@ -50,15 +50,15 @@ export default function BoardDetailPage() {
   }
 
   const deletePost = async () => {
-    const confirmed = await ShowConfirmToast("게시글을 삭제하시겠습니까?");
+    const confirmed = await ShowConfirmToast('게시글을 삭제하시겠습니까?');
     if (confirmed) {
       const response = await axios.delete(`/posts/${_id}`);
       if (response.status === 200) {
-        toast.success("게시글 삭제가 완료되었습니다.");
+        toast.success('게시글 삭제가 완료되었습니다.');
         queryClient.invalidateQueries({
-          queryKey: ["posts"],
+          queryKey: ['posts'],
         });
-        navigate("/board", { replace: true });
+        navigate('/board', { replace: true });
       }
     }
   };
@@ -70,27 +70,27 @@ export default function BoardDetailPage() {
       <Helmet>
         <title>바로파밍 | 바로Farm</title>
       </Helmet>
-      <div className="mx-5">
-        <div className="flex flex-row mt-5 items-center">
+      <div className='mx-5'>
+        <div className='flex flex-row mt-5 items-center'>
           <img
             src={
               data?.user.image
-                ? data.user.image.includes("http://") ||
-                  data.user.image.includes("https://")
+                ? data.user.image.includes('http://') ||
+                  data.user.image.includes('https://')
                   ? data.user.image
-                  : `https://11.fesp.shop${data.user.image}`
-                : "/images/profile/ProfileImage_Sample.jpg"
+                  : `https://fesp-api.koyeb.app/market${data.user.image}`
+                : '/images/profile/ProfileImage_Sample.jpg'
             }
-            alt="ProfileImage"
-            className="w-6 h-6 rounded-full object-cover"
+            alt='ProfileImage'
+            className='w-6 h-6 rounded-full object-cover'
           />
-          <span className="mx-[5px] text-sm">{data?.user.name}</span>
-          <span className="text-[10px] ml-auto self-start text-gray4">
+          <span className='mx-[5px] text-sm'>{data?.user.name}</span>
+          <span className='text-[10px] ml-auto self-start text-gray4'>
             {newDate}
           </span>
         </div>
-        <div className="mx-[5px] my-[30px]">
-          {data?.content.split("<br/>").map((line: string, index: number) => (
+        <div className='mx-[5px] my-[30px]'>
+          {data?.content.split('<br/>').map((line: string, index: number) => (
             <Fragment key={index}>
               {line}
               <br />
@@ -99,17 +99,17 @@ export default function BoardDetailPage() {
         </div>
         {data?.image && (
           <img
-            className="relative mt-10 mb-1 rounded-md mx-auto"
-            src={`https://11.fesp.shop${data.image}`}
+            className='relative mt-10 mb-1 rounded-md mx-auto'
+            src={`https://fesp-api.koyeb.app/market${data.image}`}
           />
         )}
         {data?.user._id === user?._id && (
-          <div className="text-right text-sm">
-            <Link className="underline" to="edit" state={{ data: data }}>
+          <div className='text-right text-sm'>
+            <Link className='underline' to='edit' state={{ data: data }}>
               수정
-            </Link>{" "}
-            |{" "}
-            <button className="underline" onClick={deletePost}>
+            </Link>{' '}
+            |{' '}
+            <button className='underline' onClick={deletePost}>
               삭제
             </button>
           </div>

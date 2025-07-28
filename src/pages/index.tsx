@@ -1,34 +1,34 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useOutletContext } from "react-router-dom";
-import HeaderIcon from "@components/HeaderIcon";
-import Product from "@components/Product";
-import ProductBig from "@components/ProductBig";
-import Carousel from "@components/Carousel";
-import { useQuery } from "@tanstack/react-query";
-import useAxiosInstance from "@hooks/useAxiosInstance";
-import Spinner from "@components/Spinner";
-import DataErrorPage from "@pages/DataErrorPage";
-import getMonthlyData from "@utils/getMonthlyData";
-import { Helmet } from "react-helmet-async";
-import { BoardData, ProductData, SetHeaderContents } from "types";
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
+import HeaderIcon from '@components/HeaderIcon';
+import Product from '@components/Product';
+import ProductBig from '@components/ProductBig';
+import Carousel from '@components/Carousel';
+import { useQuery } from '@tanstack/react-query';
+import useAxiosInstance from '@hooks/useAxiosInstance';
+import Spinner from '@components/Spinner';
+import DataErrorPage from '@pages/DataErrorPage';
+import getMonthlyData from '@utils/getMonthlyData';
+import { Helmet } from 'react-helmet-async';
+import { BoardData, ProductData, SetHeaderContents } from 'types';
 
 const categories = [
-  { title: "제철 과일", image: "/images/menu/Fruit.svg", url: "/menu/fruit" },
+  { title: '제철 과일', image: '/images/menu/Fruit.svg', url: '/menu/fruit' },
   {
-    title: "채소",
-    image: "/images/menu/Vegetable.svg",
-    url: "/menu/vegetable",
+    title: '채소',
+    image: '/images/menu/Vegetable.svg',
+    url: '/menu/vegetable',
   },
-  { title: "김치", image: "/images/menu/Kimchi.svg", url: "/menu/kimchi" },
+  { title: '김치', image: '/images/menu/Kimchi.svg', url: '/menu/kimchi' },
   {
-    title: "축산물",
-    image: "/images/menu/Livestock.svg",
-    url: "/menu/liveStock",
+    title: '축산물',
+    image: '/images/menu/Livestock.svg',
+    url: '/menu/liveStock',
   },
-  { title: "수산물", image: "/images/menu/Seafood.svg", url: "/menu/seafood" },
-  { title: "간편식품", image: "/images/menu/Simple.svg", url: "/menu/simple" },
-  { title: "떡", image: "/images/menu/Ricecake.svg", url: "/menu/riceCake" },
-  { title: "쌀/잡곡", image: "/images/menu/Rice.svg", url: "/menu/rice" },
+  { title: '수산물', image: '/images/menu/Seafood.svg', url: '/menu/seafood' },
+  { title: '간편식품', image: '/images/menu/Simple.svg', url: '/menu/simple' },
+  { title: '떡', image: '/images/menu/Ricecake.svg', url: '/menu/riceCake' },
+  { title: '쌀/잡곡', image: '/images/menu/Rice.svg', url: '/menu/rice' },
 ];
 
 export default function MainPage() {
@@ -45,14 +45,14 @@ export default function MainPage() {
     setHeaderContents({
       leftChild: (
         <img
-          src="/images/BaroFarmLogo_long.png"
-          className="absolute top-1/2 -translate-y-1/2 h-[40px]"
+          src='/images/BaroFarmLogo_long.png'
+          className='absolute top-1/2 -translate-y-1/2 h-[40px]'
         />
       ),
       rightChild: (
         <>
-          <HeaderIcon name="search" onClick={() => navigate("/search")} />
-          <HeaderIcon name="cart_empty" onClick={() => navigate("/cart")} />
+          <HeaderIcon name='search' onClick={() => navigate('/search')} />
+          <HeaderIcon name='cart_empty' onClick={() => navigate('/cart')} />
         </>
       ),
     });
@@ -68,22 +68,23 @@ export default function MainPage() {
 
   // 상품 목록 데이터 fetching
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["products"],
-    queryFn: () => axios.get("/products"),
+    queryKey: ['products'],
+    queryFn: () => axios.get('/products'),
     select: (res) => res.data.item,
     staleTime: 1000 * 10,
   });
 
   // 게시글 데이터 fetching
   const { data: board } = useQuery({
-    queryKey: ["posts", "community"],
-    queryFn: () => axios.get("/posts", {
-      params: { type: "community"},
-    }),
+    queryKey: ['posts', 'community'],
+    queryFn: () =>
+      axios.get('/posts', {
+        params: { type: 'community' },
+      }),
     select: (res) => res.data.item,
     staleTime: 1000 * 10,
   });
-  console.log('커뮤니티 데이터: ', board)
+  console.log('커뮤니티 데이터: ', board);
 
   if (isLoading) return <Spinner />;
   if (isError) return <DataErrorPage />;
@@ -143,7 +144,7 @@ export default function MainPage() {
         .map((item: BoardData, index: number) => (
           <img
             key={index}
-            src={`https://11.fesp.shop${item.image}`}
+            src={`https://fesp-api.koyeb.app/market${item.image}`}
             alt={item.content}
             onClick={() => navigate(`/board/${item._id}`)}
           />
@@ -158,97 +159,97 @@ export default function MainPage() {
       </Helmet>
       <div>
         <Carousel height={225} data={saleProducts} />
-        <section className="px-5 mb-4">
-          <h2 className="text-xl mb-3">
-            관심있는 <span className="font-bold">카테고리</span> 선택하기
+        <section className='px-5 mb-4'>
+          <h2 className='text-xl mb-3'>
+            관심있는 <span className='font-bold'>카테고리</span> 선택하기
           </h2>
-          <div className="category-div grid grid-cols-4 gap-y-[6px] gap-x-[14px] text-[14px] *:flex *:flex-col *:text-center">
+          <div className='category-div grid grid-cols-4 gap-y-[6px] gap-x-[14px] text-[14px] *:flex *:flex-col *:text-center'>
             {categoryIcons}
           </div>
         </section>
-        <section className="px-5 mb-4">
-          <div className="flex justify-between mb-3">
-            <h2 className="text-xl">
-              지금 최고 <span className="font-bold">인기 상품! 🔥</span>
+        <section className='px-5 mb-4'>
+          <div className='flex justify-between mb-3'>
+            <h2 className='text-xl'>
+              지금 최고 <span className='font-bold'>인기 상품! 🔥</span>
             </h2>
             <Link
-              to={"/search/best"}
-              className="text-xs flex gap-1 items-start cursor-pointer"
+              to={'/search/best'}
+              className='text-xs flex gap-1 items-start cursor-pointer'
             >
               더보기
               <img
-                src="/icons/icon_move.svg"
-                alt="더보기 버튼"
-                className="size-4"
+                src='/icons/icon_move.svg'
+                alt='더보기 버튼'
+                className='size-4'
               />
             </Link>
           </div>
-          <div className="grid grid-cols-2 justify-between gap-5">
+          <div className='grid grid-cols-2 justify-between gap-5'>
             {bestProducts}
           </div>
         </section>
-        <section className="px-5 mb-4">
-          <div className="flex justify-between mb-3">
-            <h2 className="text-xl">
-              따끈따끈한 <span className="font-bold">신상품! ⏰</span>
+        <section className='px-5 mb-4'>
+          <div className='flex justify-between mb-3'>
+            <h2 className='text-xl'>
+              따끈따끈한 <span className='font-bold'>신상품! ⏰</span>
             </h2>
             <Link
-              to={"/search/new"}
-              className="text-xs flex gap-1 items-start cursor-pointer"
+              to={'/search/new'}
+              className='text-xs flex gap-1 items-start cursor-pointer'
             >
               더보기
               <img
-                src="/icons/icon_move.svg"
-                alt="더보기 버튼"
-                className="size-4"
+                src='/icons/icon_move.svg'
+                alt='더보기 버튼'
+                className='size-4'
               />
             </Link>
           </div>
-          <div className="grid grid-cols-2 justify-between gap-5">
+          <div className='grid grid-cols-2 justify-between gap-5'>
             {newProducts}
           </div>
         </section>
-        <section className="px-5 mb-4">
-          <div className="flex justify-between">
-            <h2 className="text-xl">
-              이 맛이야! <span className="font-bold">제철 음식 🍂</span>
+        <section className='px-5 mb-4'>
+          <div className='flex justify-between'>
+            <h2 className='text-xl'>
+              이 맛이야! <span className='font-bold'>제철 음식 🍂</span>
             </h2>
             <Link
-              to={"/search/seasonal"}
-              className="text-xs flex gap-1 items-start cursor-pointer"
+              to={'/search/seasonal'}
+              className='text-xs flex gap-1 items-start cursor-pointer'
             >
               더보기
               <img
-                src="/icons/icon_move.svg"
-                alt="더보기 버튼"
-                className="size-4"
+                src='/icons/icon_move.svg'
+                alt='더보기 버튼'
+                className='size-4'
               />
             </Link>
           </div>
-          <div className="flex overflow-x-auto gap-3">{onMonthProducts}</div>
+          <div className='flex overflow-x-auto gap-3'>{onMonthProducts}</div>
         </section>
-        <section className="mb-4">
-          <div className="flex justify-between px-5 mb-4">
-            <h2 className="text-xl">
-              나만의 <span className="font-bold">요리 스토리 🥘</span>
+        <section className='mb-4'>
+          <div className='flex justify-between px-5 mb-4'>
+            <h2 className='text-xl'>
+              나만의 <span className='font-bold'>요리 스토리 🥘</span>
             </h2>
-            <div className="flex gap-1 items-start relative *:relative *:top-1">
-              <Link to="/board" className="text-xs">
+            <div className='flex gap-1 items-start relative *:relative *:top-1'>
+              <Link to='/board' className='text-xs'>
                 커뮤니티 가기
               </Link>
               <button>
                 <img
-                  src="/icons/icon_move.svg"
-                  alt="더보기 버튼"
-                  className="size-4"
+                  src='/icons/icon_move.svg'
+                  alt='더보기 버튼'
+                  className='size-4'
                 />
               </button>
             </div>
           </div>
           {storyImages}
         </section>
-        <section className="flex flex-col gap-1 px-5 bg-gray1 text-black text-sm py-5 text-center">
-          <p className="font-semibold">(주) 바로팜 사업자 정보</p>
+        <section className='flex flex-col gap-1 px-5 bg-gray1 text-black text-sm py-5 text-center'>
+          <p className='font-semibold'>(주) 바로팜 사업자 정보</p>
           <p>
             (주)바로팜 | 대표자 : 바로팜 <br />
             사업자 등록번호 : 023-25-59672 <br />
@@ -256,8 +257,8 @@ export default function MainPage() {
             대표번호 : 1588-1028 <br />
             메일 : baroFarm@baroFarm.co.kr
           </p>
-          <p className="font-semibold">고객센터 1800-1800</p>
-          <p className="mb-[58px]">
+          <p className='font-semibold'>고객센터 1800-1800</p>
+          <p className='mb-[58px]'>
             누구보다 빠르게 남들과는 다르게 상담해 드립니다.
           </p>
           <p>이용약관 | 개인정보처리방침 | 게시글 수집 및 이용 안내</p>

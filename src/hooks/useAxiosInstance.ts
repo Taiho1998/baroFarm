@@ -1,10 +1,10 @@
-import axios from "axios";
-import useUserStore from "@zustand/useUserStore";
-import { useLocation, useNavigate } from "react-router-dom";
-import ShowConfirmToast from "@components/ShowConfirmToast";
+import axios from 'axios';
+import useUserStore from '@zustand/useUserStore';
+import { useLocation, useNavigate } from 'react-router-dom';
+import ShowConfirmToast from '@components/ShowConfirmToast';
 
 // access token 재발급 URL
-const REFRESH_URL = "/auth/refresh";
+const REFRESH_URL = '/auth/refresh';
 
 function useAxiosInstance() {
   const { user, setUser, resetUser } = useUserStore();
@@ -14,12 +14,12 @@ function useAxiosInstance() {
   // 기본 설정을 가진 새로운 인스턴스를 생성할 때 사용하는 메서드.
   // 매 요청마다 공통된 설정을 적용할 수 있다.
   const instance = axios.create({
-    baseURL: "https://11.fesp.shop",
+    baseURL: 'https://fesp-api.koyeb.app/market',
     timeout: 1000 * 15,
     headers: {
-      "Content-Type": "application/json",
-      accept: "application/json",
-      "client-id": "final04",
+      'Content-Type': 'application/json',
+      accept: 'application/json',
+      'client-id': 'febc11-final04-regj',
     },
   });
 
@@ -56,7 +56,7 @@ function useAxiosInstance() {
     async (error) => {
       // 2xx 외의 범위에 있는 상태 코드는 이 함수가 호출됨
       // 공통 에러 처리
-      console.error("인터셉터", error);
+      console.error('인터셉터', error);
       // 서버에서 전달되는 error 객체에서 config, response를 뽑아냄.
       const { config, response } = error;
 
@@ -105,10 +105,10 @@ function useAxiosInstance() {
   async function navigateLogin() {
     resetUser();
     const gotoLogin = await ShowConfirmToast(
-      "로그인 후 이용 가능합니다.\n로그인 페이지로 이동하시겠습니까?"
+      '로그인 후 이용 가능합니다.\n로그인 페이지로 이동하시겠습니까?'
     );
     if (gotoLogin)
-      navigate("/users/login", { state: { from: location.pathname } });
+      navigate('/users/login', { state: { from: location.pathname } });
   }
 
   return instance;

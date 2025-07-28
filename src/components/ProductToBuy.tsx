@@ -1,7 +1,7 @@
-import useAxiosInstance from "@hooks/useAxiosInstance";
-import { useQuery } from "@tanstack/react-query";
-import PropTypes from "prop-types";
-import { ProductData } from "types";
+import useAxiosInstance from '@hooks/useAxiosInstance';
+import { useQuery } from '@tanstack/react-query';
+import PropTypes from 'prop-types';
+import { ProductData } from 'types';
 
 ProductToBuy.propTypes = {
   product: PropTypes.shape({
@@ -29,7 +29,7 @@ export default function ProductToBuy({
 
   // 넘어온 데이터 기반으로 seller의 닉네임 fetching
   const { data } = useQuery({
-    queryKey: ["users", `${product.seller_id}`, "name"],
+    queryKey: ['users', `${product.seller_id}`, 'name'],
     queryFn: () => axios.get(`/users/${product.seller_id}/name`),
     select: (res) => res.data,
     staleTime: 1000 * 10,
@@ -38,20 +38,20 @@ export default function ProductToBuy({
   if (!data) return null;
 
   return (
-    <div className="mb-3 [&:not(:last-child)]:pb-5 [&:not(:last-child)]:border-b border-gray2">
-      <div className="text-sm font-bold">{data.item.name}</div>
-      <div className="pt-4 flex gap-3">
+    <div className='mb-3 [&:not(:last-child)]:pb-5 [&:not(:last-child)]:border-b border-gray2'>
+      <div className='text-sm font-bold'>{data.item.name}</div>
+      <div className='pt-4 flex gap-3'>
         <img
-          src={`https://11.fesp.shop/${product.image.path}`}
-          alt="상품 이미지"
-          className="size-[72px] object-cover rounded-md"
+          src={`https://fesp-api.koyeb.app/market/${product.image.path}`}
+          alt='상품 이미지'
+          className='size-[72px] object-cover rounded-md'
         />
-        <div className="flex flex-col text-xs mb-1">
+        <div className='flex flex-col text-xs mb-1'>
           <div>
             <span>{product.name}</span>
-            <span className="text-gray4"> / {quantity}개</span>
+            <span className='text-gray4'> / {quantity}개</span>
           </div>
-          <span className="text-[16px] font-extrabold mt-auto">
+          <span className='text-[16px] font-extrabold mt-auto'>
             {(product.extra.saledPrice * quantity).toLocaleString()}원
           </span>
         </div>

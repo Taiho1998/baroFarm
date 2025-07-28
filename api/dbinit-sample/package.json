@@ -4,7 +4,7 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "dbinit": "cross-env NODE_ENV=production node ./init.js BaroFarmSample final04"
+    "dbinit": "cross-env NODE_ENV=production node ./init.js BaroFarmSample febc11-final04-regj"
   },
   "keywords": [],
   "author": "",

@@ -1,11 +1,11 @@
-import Checkbox from "@components/Checkbox";
-import { UseMutationResult, useQuery } from "@tanstack/react-query";
-import axios, { AxiosResponse } from "axios";
-import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
-import { FieldValues, UseFormRegister } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { ProductData } from "types";
+import Checkbox from '@components/Checkbox';
+import { UseMutationResult, useQuery } from '@tanstack/react-query';
+import axios, { AxiosResponse } from 'axios';
+import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
+import { FieldValues, UseFormRegister } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { ProductData } from 'types';
 
 CartItem.propTypes = {
   _id: PropTypes.number.isRequired,
@@ -60,20 +60,23 @@ export default function CartItem({
   isChecked?: boolean;
 }) {
   // 판매자 이름 상태관리
-  const [seller, setSeller] = useState("");
+  const [seller, setSeller] = useState('');
   const navigate = useNavigate();
 
   // 판매자 id로 이름 fetching
   const { data } = useQuery({
-    queryKey: ["users", `${product.seller_id}`, "name"],
+    queryKey: ['users', `${product.seller_id}`, 'name'],
     queryFn: () =>
-      axios.get(`https://11.fesp.shop/users/${product.seller_id}/name`, {
-        headers: {
-          "Content-Type": "application/json",
-          accept: "application/json",
-          "client-id": "final04",
-        },
-      }),
+      axios.get(
+        `https://fesp-api.koyeb.app/market/users/${product.seller_id}/name`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            accept: 'application/json',
+            'client-id': 'febc11-final04-regj',
+          },
+        }
+      ),
     select: (res) => res.data.item.name,
   });
 
@@ -83,11 +86,11 @@ export default function CartItem({
   }, [data]);
 
   return (
-    <div className="mb-3">
-      <div className="py-[10px] border-b border-gray2 text-[14px]">
+    <div className='mb-3'>
+      <div className='py-[10px] border-b border-gray2 text-[14px]'>
         {seller}
       </div>
-      <div className="pt-[10px] flex gap-3">
+      <div className='pt-[10px] flex gap-3'>
         <Checkbox
           name={`${_id}`}
           register={register}
@@ -95,28 +98,28 @@ export default function CartItem({
           checked={isChecked as boolean}
         />
         <img
-          src={`https://11.fesp.shop${product.image.path}`}
-          alt="상품 이미지"
-          className="size-[72px] object-cover cursor-pointer"
+          src={`https://fesp-api.koyeb.app/market${product.image.path}`}
+          alt='상품 이미지'
+          className='size-[72px] object-cover cursor-pointer'
           onClick={() => navigate(`/product/${product._id}`)}
         />
         <div>
           <div
-            className="cursor-pointer"
+            className='cursor-pointer'
             onClick={() => navigate(`/product/${product._id}`)}
           >
-            <p className="text-xs mb-1">{product.name}</p>
-            <div className="flex items-center mb-2">
-              <span className="text-xs font-semibold text-red1 mr-1">{`${product.extra.sale}%`}</span>
-              <span className="text-[16px] font-extrabold">
+            <p className='text-xs mb-1'>{product.name}</p>
+            <div className='flex items-center mb-2'>
+              <span className='text-xs font-semibold text-red1 mr-1'>{`${product.extra.sale}%`}</span>
+              <span className='text-[16px] font-extrabold'>
                 {product.extra.saledPrice.toLocaleString()}원
               </span>
             </div>
           </div>
-          <div className="ring-1 ring-gray2 w-fit flex text-center items-center rounded-sm *:flex *:items-center *:justify-center *:text-sm">
+          <div className='ring-1 ring-gray2 w-fit flex text-center items-center rounded-sm *:flex *:items-center *:justify-center *:text-sm'>
             <button
-              className="size-6 border-r border-gray2"
-              type="button"
+              className='size-6 border-r border-gray2'
+              type='button'
               onClick={() => {
                 if (quantity > 1)
                   updateItem.mutate({ _id, quantity: quantity - 1 });
@@ -124,10 +127,10 @@ export default function CartItem({
             >
               -
             </button>
-            <div className="px-2">{quantity}</div>
+            <div className='px-2'>{quantity}</div>
             <button
-              className="size-6 border-l border-gray2"
-              type="button"
+              className='size-6 border-l border-gray2'
+              type='button'
               onClick={() => {
                 updateItem.mutate({ _id, quantity: quantity + 1 });
               }}
@@ -137,11 +140,11 @@ export default function CartItem({
           </div>
         </div>
         <button
-          className="self-start ml-auto shrink-0"
-          type="button"
+          className='self-start ml-auto shrink-0'
+          type='button'
           onClick={() => deleteItem.mutate(_id)}
         >
-          <img src="/icons/icon_x.svg" alt="닫기 버튼" />
+          <img src='/icons/icon_x.svg' alt='닫기 버튼' />
         </button>
       </div>
     </div>
